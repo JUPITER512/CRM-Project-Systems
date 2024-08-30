@@ -20,8 +20,8 @@ export default function App() {
         <Route path="/Otp-Code" element={<Otp/>}/>
         <Route path="/home"  element={<Layout/>}>
           <Route index path="dashboard" element={<Dashboard/>}/>
-          <Route index path="Userlist" element={<Userlist/>}/>
-          <Route index path="Adduser" element={<Adduser/>}/>
+          <Route index path="CustomerList" element={<Userlist/>}/>
+          <Route index path="AddCustomer" element={<Adduser/>}/>
           <Route index path="ProfileSettings" element={<ProfileSettings/>}/>
         </Route>
       </Routes>

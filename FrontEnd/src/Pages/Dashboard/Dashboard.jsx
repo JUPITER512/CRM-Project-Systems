@@ -1,35 +1,36 @@
+import Table from "@components/Table";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   return (
-    <div className="bg-gray-50 rounded-2xl h-[97%] flex flex-col my-2">
-      <h2 className="text-center py-4 font-bold text-xl md:text-2xl lg:text-3xl xl:text-4xl">
-        Dashboard
-      </h2>
-      <div className="flex flex-col h-full justify-evenly items-center">
-        <div className="bg-slate-600 h-[25%] w-[60%] flex items-center justify-center rounded-2xl gap-6">
-          <div className="bg-yellow-100 w-3/12 h-[80%] rounded-xl">
-            <h3 className="font-semibold ml-4 mt-4 text-xl">Title</h3>
-            <div className="ml-4 mt-2">Content</div>
+    <main className="w-[100%] bg-white px-10 py-8 rounded-lg antialiased outline-none border-none">
+      <section className="Content bg-slate-200 rounded-xl p-4 flex flex-col ">
+        <div className="bg-gray-400 flex flex-col md:flex-row gap-10 m-6 rounded-lg items-center justify-center py-10">
+          <div className=" bg-slate-500 w-[80%]  lg:w-[25%] rounded-lg p-4">
+            <h1>Heading</h1>
+            <div>Content</div>
           </div>
-          <div className="bg-yellow-100 w-3/12 h-[80%] rounded-xl">
-            <h3 className="font-semibold ml-4 mt-4 text-xl">Title</h3>
-            <div className="ml-4 mt-2">Content</div>
+          <div className=" bg-slate-500 w-[80%] lg:w-[25%] rounded-lg p-4">
+            <h1>Heading</h1>
+            <div>Content</div>
           </div>
-          <div className="bg-yellow-100 w-3/12 h-[80%] rounded-xl">
-            <h3 className="font-semibold ml-4 mt-4 text-xl">Title</h3>
-            <div className="ml-4 mt-2">Content</div>
+          <div className=" bg-slate-500 w-[80%] lg:w-[25%] rounded-lg p-4">
+            <h1>Heading</h1>
+            <div>Content</div>
           </div>
         </div>
-        <div className="w-11/12 h-[50%]">
-          <div className=" flex items-center justify-between px-2">
-            <h4 className=" font-semibold">Recently Added Customers</h4>
-            <Link to={'/home/Userlist'} className=" font-semibold underline">See All Customers -{'>'}</Link>
+        <div className=" w-[95%] rounded-lg bg-slate-50 mx-auto px-4">
+          <section className=" flex justify-between">
+            <h3 className=" font-semibold">Recently Added Customers</h3>
+            <Link className="underline font-semibold">Check All Customers</Link>
+          </section>
+          <div className="min-h-[20rem]">
+              <Table/>
           </div>
-          <div className="bg-slate-100 rounded-2xl h-full">hello</div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

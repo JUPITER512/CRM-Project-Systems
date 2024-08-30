@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "./assets/logo.jpg";
 import React, { useState } from "react";
 import Breadcrumbs from "@components/BreadCrumb";
-const pages = ["Dashboard", "Userlist", "Adduser", "ProfileSettings"];
+const pages = ["Dashboard", "CustomerList", "AddCustomer", "ProfileSettings"];
 const Layout = () => {
   const [sidebar, setSidebar] = useState(false);
   const path = useLocation().pathname.split("/")[2];
@@ -43,9 +43,14 @@ const Layout = () => {
               return (
                 <React.Fragment key={item}>
                   <li
-                    onClick={()=>{navigate(`/home/${item}`)}}
+                    onClick={()=>{
+                      navigate(`/home/${item}`);
+                      if(sidebar){
+                        setSidebar(false)
+                      }
+                    }}
                     className={` my-4 hover:bg-gray-400 mx-12 p-2 rounded-lg transition-colors duration-300 ease-in-out hover:text-gray-100 cursor-pointer ${
-                      item.toLowerCase() == path ? "bg-gray-400" : ""
+                      item.toLowerCase() == path.toLowerCase() ? "bg-gray-400" : ""
                     }`}
                   >
                     {item}
