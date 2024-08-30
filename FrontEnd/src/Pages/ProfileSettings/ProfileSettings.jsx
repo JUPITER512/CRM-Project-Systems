@@ -1,8 +1,10 @@
+import AnimatePage from "@components/AnimatePage";
 import PictureUpload from "./PictureUpload";
 
 const ProfileSettings = () => {
   return (
-    <div className="bg-gray-50 rounded-2xl py-4 mt-2 px-4 sm:px-6 lg:px-8">
+   <AnimatePage>
+     <div className="bg-gray-50 rounded-2xl py-4 mt-2 px-4 sm:px-6 lg:px-8">
       <h2 className="text-center py-4 font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
         Profile Settings
       </h2>
@@ -60,6 +62,7 @@ const ProfileSettings = () => {
         </div>
       </div>
     </div>
+   </AnimatePage>
   );
 };
 
