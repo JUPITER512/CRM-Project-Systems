@@ -1,54 +1,28 @@
 import AnimatePage from "@components/AnimatePage";
-import Table from "@components/Table";
-import BasicTable from "@components/BasicTable";
 import React from "react";
 import { Link } from "react-router-dom";
-import SortingTable from "@components/SortingTable";
-import FilterTable from "@components/FilterTable";
-import PaginationTable from "@components/PaginationTable";
-const tableData = {
-  name: ["Ali", "Murtaza",],
-  email: ["ali@gmail.com", "murtaza@gmail.com",],
-  phoneNo: [123456, 123456],
-  country: ["Pakistan", "Canada"],
-  status: [true, false,],
-};
 
 const Dashboard = () => {
   return (
     <AnimatePage>
-
-    <main className="w-[100%] bg-white px-10 py-8 rounded-lg antialiased outline-none border-none">
-      <section className="Content bg-slate-200 rounded-xl p-4 flex flex-col ">
-        <div className="bg-gray-400 flex flex-col md:flex-row gap-10 m-6 rounded-lg items-center justify-center py-10">
-          <div className=" bg-slate-500 w-[80%]  lg:w-[25%] rounded-lg p-4">
-            <h1>Heading</h1>
-            <div>Content</div>
+      <main className="w-full bg-white dark:bg-gray-900 px-6 py-8 rounded-lg antialiased border-none">
+        <section className="rounded-xl p-4">
+          <div className="bg-gray-400 dark:bg-gray-600 flex flex-col md:flex-row gap-6 m-4 rounded-lg p-6 items-center justify-center">
+            <div className="bg-slate-500 dark:bg-slate-700 w-full md:w-1/3 lg:w-1/4 rounded-lg p-4">
+              <h1 className="text-xl font-semibold text-white dark:text-gray-200">Heading</h1>
+              <div className="text-white dark:text-gray-400 mt-2">Content</div>
+            </div>
+            <div className="bg-slate-500 dark:bg-slate-700 w-full md:w-1/3 lg:w-1/4 rounded-lg p-4">
+              <h1 className="text-xl font-semibold text-white dark:text-gray-200">Heading</h1>
+              <div className="text-white dark:text-gray-400 mt-2">Content</div>
+            </div>
+            <div className="bg-slate-500 dark:bg-slate-700 w-full md:w-1/3 lg:w-1/4 rounded-lg p-4">
+              <h1 className="text-xl font-semibold text-white dark:text-gray-200">Heading</h1>
+              <div className="text-white dark:text-gray-400 mt-2">Content</div>
+            </div>
           </div>
-          <div className=" bg-slate-500 w-[80%] lg:w-[25%] rounded-lg p-4">
-            <h1>Heading</h1>
-            <div>Content</div>
-          </div>
-          <div className=" bg-slate-500 w-[80%] lg:w-[25%] rounded-lg p-4">
-            <h1>Heading</h1>
-            <div>Content</div>
-          </div>
-        </div>
-        <div className=" w-[95%] rounded-lg bg-slate-50 mx-auto">
-          <section className=" flex px-4 justify-between">
-            <h3 className=" font-semibold text-sm md:text-lg">Recently Added Customers</h3>
-            <Link className="underline font-semibold text-sm md:text-lg" to={"/Home/CustomerList"}>Check All Customers</Link>
-          </section>
-          <div className="min-h-[20rem]">
-            {/* <BasicTable/> */}
-            {/* <SortingTable/> */}
-            {/* <FilterTable/> */}
-            <PaginationTable/>
-              {/* <Table data={tableData}/> */}
-          </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
     </AnimatePage>
   );
 };

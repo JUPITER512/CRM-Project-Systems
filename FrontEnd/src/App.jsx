@@ -9,6 +9,7 @@ import Dashboard from "@pages/Dashboard/Dashboard";
 import Userlist from "@pages/UserList/Userlist";
 import Adduser from "@pages/AddUser/Adduser";
 import ProfileSettings from "@pages/ProfileSettings/ProfileSettings";
+import UpdateCustomer from "@pages/UpdateCustomer/UpdateCustomer";
 export default function App() {
   return (
     <BrowserRouter>
@@ -20,7 +21,7 @@ export default function App() {
         <Route path="/Otp-Code" element={<Otp/>}/>
         <Route path="/home"  element={<Layout/>}>
           <Route index path="dashboard" element={<Dashboard/>}/>
-          <Route index path="CustomerList" element={<Userlist/>}/>
+          <Route path="CustomerList" element={<Userlist/>}></Route>
           <Route index path="AddCustomer" element={<Adduser/>}/>
           <Route index path="ProfileSettings" element={<ProfileSettings/>}/>
         </Route>

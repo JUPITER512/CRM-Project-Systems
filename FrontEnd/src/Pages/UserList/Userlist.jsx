@@ -1,5 +1,6 @@
 import AnimatePage from "@components/AnimatePage";
-import Table from "@components/Table";
+import PaginationButtons from "@components/Table/PaginationButtons";
+import Table from "@components/Table/Table";
 const tableData = {
   name: ["Ali", "Murtaza", "Bokhari", "Syed Ali"],
   email: [
@@ -16,8 +17,10 @@ const tableData = {
 const Userlist = () => {
   return (
     <AnimatePage>
-      <div className=" w-full bg-white">
-        <Table data={tableData} />
+      <div className=" w-full bg-white dark:bg-slate-900">
+        <Table/>
+        <div className="p-4 flex justify-end">
+      </div>
       </div>
     </AnimatePage>
   );

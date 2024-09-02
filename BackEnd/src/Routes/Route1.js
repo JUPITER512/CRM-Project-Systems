@@ -1,6 +1,5 @@
 import express from "express";
-const route1=express.Router();
-route1.get('/',(req,res)=>{
-    res.send("Hello World")
-})
-export default route1
+import { Sign_up } from "../Controller/Authentication";
+const AuthenticationRoute=express.Router();
+AuthenticationRoute.post('/sign-up',Sign_up)
+export default AuthenticationRoute
