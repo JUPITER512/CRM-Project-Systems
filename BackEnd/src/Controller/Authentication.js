@@ -1,3 +1,4 @@
+import jsonwebtoken from "jsonwebtoken";
 import { User } from "../Models/User.model.js";
 import { generateOTP } from "../Utils/GenerateOtp.js";
 import { sendOTP } from "../Utils/NodeMailer.js";
@@ -219,5 +220,53 @@ export const Change_Password=async(req,res)=>{
       message:"Internal Server Error",
       error:error.message
     })
+  }
+}
+
+export const Update_Info=async(req,res)=>{
+
+  try {
+    const userId=req.user._id
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const {newData}=req.body;
+    const updateUserInfo=await User.findByIdAndUpdate(id,newData,{
+      new:true,
+      runValidators:true
+    })
+    if (!updateUserInfo) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      message: "User updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+}
+
+export const Refresh_Access_Token=async(req,res)=>{
+  try {
+    const authHeader=req.headers.authorization
+    const token=authHeader.split(" ")[1] || authHeader;
+
+    console.log(token)
+    const decodedToken=jsonwebtoken.verify(token,process.env.ACCESS_KEY_SECRET);
+    console.log(decodedToken)
+    const currentDate = Math.floor(Date.now() / 1000);
+    if (decodedToken.exp < currentDate) {
+      return res.status(401).json({ message: 'Token has expired' });
+    }
+    res.json({
+      message: 'Token is valid',
+      update: decodedToken
+    });
+  } catch (error) {
+    console.error('Error in Refresh_Access_Token:', error);
+    res.status(500).json({ message: 'Internal server error',error:error.message });
   }
 }
