@@ -6,6 +6,7 @@ const app=express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('combined'));
+app.use(express.static('Public'))
 app.use('/api',MainRoute);
 
 export default app

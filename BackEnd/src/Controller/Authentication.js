@@ -2,6 +2,9 @@ import jsonwebtoken from "jsonwebtoken";
 import { User } from "../Models/User.model.js";
 import { generateOTP } from "../Utils/GenerateOtp.js";
 import { sendOTP } from "../Utils/NodeMailer.js";
+import Cloudinary_Uplooad from "../Utils/Cloudinary.js";
+import fs from 'fs';
+
 export const Sign_up = async (req, res) => {
   try {
     const { email, name, password, confirmPassword } = req.body;
@@ -71,29 +74,41 @@ export const Sign_in = async (req, res) => {
       email: email,
     });
     if (!userInDb) {
-      return res.status(409).json({
+      return res.status(404).json({
         message: "Email Not Registered/User Not Found",
       });
     }
-    if (userInDb.verify==false) {
+    if (!userInDb.verify) {
       return res.status(404).json({
         message: "Please Verify Your Email",
       });
     }
     const checkPassword = userInDb.isPasswordCorrect(password);
     if (!checkPassword) {
-      return res.status(409).json({
+      return res.status(401).json({
         message: "Invalid Credentials",
       });
     }
+    delete userInDb.password
+    delete userInDb.refreshToken
+    delete userInDb.__v
+    delete userInDb.refreshToken
     const accessToken = userInDb.generateAccessToken();
-    const { password: _, ...userWithoutPassword } = userInDb.toObject();
-    res.status(200).json({
-      message: "Success",
-      data: userWithoutPassword,
-      accessToken: accessToken,
-    });
+    const refreshToken = userInDb.generateRefershToken();
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({
+        message: "Success",
+        data: userInDb,
+      });
   } catch (error) {
+    console.log("Error in signin ",error)
     res.status(500).json({
       message: "Interval Server Error",
       error: error.message,
@@ -102,29 +117,29 @@ export const Sign_in = async (req, res) => {
 };
 export const verifyAccount = async (req, res) => {
   const { email, id } = req.query;
-  console.log(req.params)
+  console.log(req.params);
   if (!email && !id) {
     return res.status(400).json({
-      message: "Invalid Link"
+      message: "Invalid Link",
     });
   }
 
   try {
-    const user = await User.findById({_id:id});
+    const user = await User.findById({ _id: id });
     if (!user) {
       return res.status(404).json({
-        message: "User not found"
+        message: "User not found",
       });
     }
     user.verify = true;
     user.save();
     res.status(200).json({
-      message: "Account verified successfully"
+      message: "Account verified successfully",
     });
   } catch (error) {
     res.status(500).json({
       message: "Internal Server Error",
-      error:error.message
+      error: error.message,
     });
   }
 };
@@ -145,6 +160,11 @@ export const Forget_Password = async (req, res) => {
         message: "User Not Found",
       });
     }
+    if (!userInDatabase.verify) {
+      return res.status(400).json({
+        message: "Email Not Verified",
+      });
+    }
     const otp = generateOTP();
     userInDatabase.otp = otp;
     userInDatabase.save();
@@ -158,84 +178,97 @@ export const Forget_Password = async (req, res) => {
       error: error.message,
     });
   }
-  //send otp code here
 };
-export const Verify_Otp=async(req,res)=>{
+export const Verify_Otp = async (req, res) => {
   try {
-    const {otp}=req.body;
-    if(!otp){
+    const { otp } = req.body;
+    if (!otp) {
       return res.status(400).json({
-        message:"No Otp is Provided"
-      })
+        message: "No Otp is Provided",
+      });
     }
-    const user=await User.findOne({
-      otp:otp
-    })
-    if(!user){
+    const user = await User.findOne({
+      otp: otp,
+    });
+    if (!user) {
       return res.status(400).json({
-        message:"Invalid Otp"
-      })
+        message: "Invalid Otp",
+      });
     }
-    user.otp=null;
+    if (!user.verify) {
+      return res.status(400).json({
+        message: "Email Not Verified",
+      });
+    }
+    user.otp = null;
     await user.save();
     return res.status(200).json({
       message: "OTP verified successfully",
       user: {
         id: user._id,
-        email: user.email 
-      }})
+        email: user.email,
+      },
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
-      error:error.message
+      error: error.message,
     });
   }
-}
-export const Change_Password=async(req,res)=>{
+};
+export const Change_Password = async (req, res) => {
   try {
-    const {password,confirmPassword,email,id}=req.body;
-    if(!password || !confirmPassword){
+    const { password, confirmPassword, email, id } = req.body;
+    if (!password || !confirmPassword) {
       return res.status(400).json({
-        message:"Password And Confrim Password Are Required"
-      })
+        message: "Password And Confrim Password Are Required",
+      });
     }
-    if(password!==confirmPassword){
+    if (password !== confirmPassword) {
       return res.status(400).json({
-        message:"Password And Confrim Password Does Not Match"
-      })
+        message: "Password And Confrim Password Does Not Match",
+      });
     }
-    const findedUser=await User.findOne({email:email,_id:id});
-    if(!findedUser){
+    const findedUser = await User.findOne({ email: email, _id: id });
+    if (!findedUser) {
       return res.status(404).json({
-        message:"User not found"
-      })
+        message: "User not found",
+      });
     }
-    findedUser.password=password;
+    if (!findedUser.verify) {
+      return res.status(400).json({
+        message: "Email Not Verified",
+      });
+    }
+
+    findedUser.password = password;
     await findedUser.save();
     res.status(200).json({
-      message:"Your Password is Successfully Change"
-    })
+      message: "Your Password is Successfully Change",
+    });
   } catch (error) {
     res.status(500).json({
-      message:"Internal Server Error",
-      error:error.message
-    })
+      message: "Internal Server Error",
+      error: error.message,
+    });
   }
-}
+};
 
-export const Update_Info=async(req,res)=>{
-
+export const Update_Info = async (req, res) => {
   try {
-    const userId=req.user._id
+    const userId = req.user._id;
     if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
+      return res.status(400).json({ message: "Email Not Verified" });
     }
-    const {newData}=req.body;
-    const updateUserInfo=await User.findByIdAndUpdate(id,newData,{
-      new:true,
-      runValidators:true
-    })
+    const { newData } = req.body;
+    const updateUserInfo = await User.findByIdAndUpdate(id, newData, {
+      new: true,
+      runValidators: true,
+    });
     if (!updateUserInfo) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!updateUserInfo.verify) {
       return res.status(404).json({ message: "User not found" });
     }
     res.status(200).json({
@@ -247,26 +280,109 @@ export const Update_Info=async(req,res)=>{
       error: error.message,
     });
   }
-}
+};
 
-export const Refresh_Access_Token=async(req,res)=>{
+export const Logout = async (req, res) => {
   try {
-    const authHeader=req.headers.authorization
-    const token=authHeader.split(" ")[1] || authHeader;
-
-    console.log(token)
-    const decodedToken=jsonwebtoken.verify(token,process.env.ACCESS_KEY_SECRET);
-    console.log(decodedToken)
-    const currentDate = Math.floor(Date.now() / 1000);
-    if (decodedToken.exp < currentDate) {
-      return res.status(401).json({ message: 'Token has expired' });
+    const userId = req.user._id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
     }
-    res.json({
-      message: 'Token is valid',
-      update: decodedToken
-    });
+    const findedUser = await User.findById(userId);
+    if (!findedUser) {
+      return res.status(400).json({ message: "User Not Found Against Id" });
+    }
+    findedUser.refreshToken = null;
+    await findedUser.save();
+    res
+      .status(200)
+      .clearCookie("accessToken")
+      .clearCookie("refreshToken")
+      .json({
+        message: "Account Logged Out Successfully",
+      });
   } catch (error) {
-    console.error('Error in Refresh_Access_Token:', error);
-    res.status(500).json({ message: 'Internal server error',error:error.message });
+    res.status(500).json({
+      message: "Internal Server Errror",
+      error: error.message,
+    });
   }
-}
+};
+
+export const Refresh_Token = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+      return res.status(401).json({
+        message: "Refresh Token is required",
+      });
+    }
+    jsonwebtoken.verify(
+      refreshToken,
+      process.env.REFRESH_KEY_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          return res.status(403).json({
+            message: "Invalid Refresh Token",
+          });
+        }
+        const userId = decoded.id;
+        const user = await User.findById(userId);
+
+        if (!user || user.refreshToken !== refreshToken) {
+          return res.status(403).json({
+            message: "User not found or Refresh Token does not match",
+          });
+        }
+        const new_access_token = user.generateAccessToken();
+        const options = {
+          httpOnly: true,
+          secure: true,
+        };
+        res.status(200).cookie("accessToken", new_access_token, options).json({
+          message: "Access Token refreshed successfully",
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
+export const upload_Picture = async (req, res) => {
+  try {
+    const userId=req.user._id;
+    if(!userId){
+      return res.status(400).json({
+        message:"User ID not given"
+      })
+    }
+    const userInDb=await User.findById(userId);
+    if(!userInDb.verify){
+      return res.status(401).json({
+        message:"Email is not verified"
+      })
+    }
+    const response=await Cloudinary_Uplooad(req.file.path);
+    userInDb.picture=response.secure_url;
+    await userInDb.save();
+    res.status(200).json({
+      message:"Image Upload Successfully"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message:"Internal Server Error",
+      error:error.message
+      
+    })
+  }finally{
+    fs.unlink(req.file.path, (unlinkError) => {
+      if (unlinkError) {
+        console.error("Failed to delete the file:", unlinkError);
+      }
+    });
+  }
+};

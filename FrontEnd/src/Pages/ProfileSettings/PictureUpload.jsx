@@ -1,4 +1,8 @@
 const PictureUpload = () => {
+  async function handleSubmit(e) {
+      e.preventDefault();
+      console.log(e)
+  }
   return (
     <div className="w-full max-w-md relative bg-gray-100 border border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center dark:bg-slate-400 dark:border-gray-600">
       <img
@@ -6,7 +10,7 @@ const PictureUpload = () => {
         alt="user-image"
         className="rounded-full h-24 w-24 bg-cover mb-4"
       />
-      <form action="" className="w-full flex flex-col gap-4 items-center">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 items-center" encType="multipart/form-data">
         <div className="flex items-center j ustify-center w-full">
           <label
             htmlFor="dropzone-file"
@@ -37,7 +41,7 @@ const PictureUpload = () => {
             <input id="dropzone-file" type="file" className="hidden" />
           </label>
         </div>
-        <button className="bg-gray-300 px-4 py-2 rounded-lg dark:bg-gray-600 dark:text-gray-200">
+        <button type="submit" className="bg-gray-300 px-4 py-2 rounded-lg dark:bg-gray-600 dark:text-gray-200">
           Upload Picture
         </button>
       </form>
