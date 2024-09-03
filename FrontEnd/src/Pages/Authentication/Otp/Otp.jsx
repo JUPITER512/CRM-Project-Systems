@@ -2,10 +2,11 @@ import { useForm } from "react-hook-form";
 import React from "react";
 import { Link } from "react-router-dom";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
-import { ref } from "yup";
+import AnimatePage from "@components/AnimatePage";
 const Otp = () => {
   const form = useForm();
-  const { handleSubmit, register, formState, getValues } = form;
+  const { handleSubmit, register, formState } = form;
+  // const{name,ref,onChange,onBlur}=register('otpCode')
   const { errors } = formState;
 
   async function onSubmit(data) {
@@ -14,6 +15,8 @@ const Otp = () => {
   return (
     <>
       <AuthenticationWrapper title={"Welcome To CRM Suite Code Verifier"}>
+        <AnimatePage>
+
         <form onSubmit={handleSubmit(onSubmit)} className=" items-center flex flex-col w-full  my-10">
           <h3 className="text-center mt-5 font-semibold text-lg">
             Enter Code Receive On Email
@@ -55,6 +58,7 @@ const Otp = () => {
             </span>
           </p>
         </form>
+        </AnimatePage>
       </AuthenticationWrapper>
     </>
   );

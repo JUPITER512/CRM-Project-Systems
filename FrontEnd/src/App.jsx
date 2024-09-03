@@ -10,8 +10,10 @@ import Userlist from "@pages/UserList/Userlist";
 import Adduser from "@pages/AddUser/Adduser";
 import ProfileSettings from "@pages/ProfileSettings/ProfileSettings";
 import UpdateCustomer from "@pages/UpdateCustomer/UpdateCustomer";
+import ReactHookForm from "@components/ReactHookForm";
 export default function App() {
   return (
+    // <ReactHookForm/>
     <BrowserRouter>
       <Routes>
         <Route path="/Sign-in" element={<Signin/>}/>

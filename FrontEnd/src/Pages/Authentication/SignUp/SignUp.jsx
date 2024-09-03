@@ -1,3 +1,4 @@
+import AnimatePage from "@components/AnimatePage";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -15,9 +16,11 @@ const SignUp = () => {
   return (
     <>
       <AuthenticationWrapper title={"Welcome To CRM Suite"}>
+        <AnimatePage>
+
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="items-center flex flex-col w-full my-10"
+          className="items-center flex flex-col w-full"
         >
           <h3 className="text-center mt-5 font-semibold text-lg">
             Enter Details to Create Free Account
@@ -121,6 +124,7 @@ const SignUp = () => {
             </span>
           </p>
         </form>
+        </AnimatePage>
       </AuthenticationWrapper>
     </>
   );

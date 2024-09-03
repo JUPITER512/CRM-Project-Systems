@@ -6,6 +6,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import ThemeSwitcher from "@components/ThemeSwitcher";
 
+
 const pages = ["Dashboard", "CustomerList", "AddCustomer", "ProfileSettings"];
 
 const Layout = () => {

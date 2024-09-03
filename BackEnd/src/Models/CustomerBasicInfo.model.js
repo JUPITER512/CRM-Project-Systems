@@ -8,10 +8,13 @@ const AddressSchema = new mongoose.Schema({
     zipCode: { type: Number }
 });
 
-const BasicInfoSchema = new mongoose.Schema({
+const customerSchema = new mongoose.Schema({
     addedBy: {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
-    },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index:true
+      },
     fullName: {
         type: String,
         trim: true,
@@ -45,8 +48,7 @@ const BasicInfoSchema = new mongoose.Schema({
     address: AddressSchema,
     customerCommunicationPreference: { type: String },
     customerStatus: {
-        type: String,
-        enum: ["Active", "Inactive"],
+        type: Boolean,
         required: true
     },
     customerCompanyName: {
@@ -61,4 +63,4 @@ const BasicInfoSchema = new mongoose.Schema({
     additionalInfoSourceOfLead: { type: String }
 }, { timestamps: true });
 
-export default mongoose.model('BasicInfo', BasicInfoSchema);
+export  const Customer=mongoose.model("Customer",customerSchema)

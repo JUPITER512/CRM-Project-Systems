@@ -1,3 +1,4 @@
+import AnimatePage from "@components/AnimatePage";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
 import { useForm } from "react-hook-form";
 
@@ -14,6 +15,8 @@ const NewPassword = () => {
       <AuthenticationWrapper
         title={"Welcome Back To CRM Suite Password Changer"}
       >
+        <AnimatePage>
+          
         <form
           onSubmit={handleSubmit(onSubmit)}
           className=" items-center flex flex-col w-full  my-10"
@@ -38,7 +41,7 @@ const NewPassword = () => {
                   message: "Password must be at least 8 characters and alphanumeric",
                 },
               })}
-            />
+              />
             {errors.newpassword && (
               <p className="text-red-600 text-sm">
                 {errors.newpassword.message}
@@ -73,6 +76,7 @@ const NewPassword = () => {
             Change
           </button>
         </form>
+            </AnimatePage>
       </AuthenticationWrapper>
     </>
   );

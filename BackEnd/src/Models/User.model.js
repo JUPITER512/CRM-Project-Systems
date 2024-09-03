@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jsonwebtoken from "jsonwebtoken";
-import bcrypt from 'bcrypt'
+// import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 const userSchema=new mongoose.Schema({
     name:{
         type:String,
@@ -32,6 +33,12 @@ const userSchema=new mongoose.Schema({
     companyname:{
         type:String,
         trim:true,
+    },
+    otp:{
+        type:Number
+    },
+    verify:{
+        type:Boolean
     },
     refreshToken:{
         type:String

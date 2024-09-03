@@ -14,7 +14,7 @@ export async function verifyJsonWebToken(req,res,next){
                 message:"Authorization Token is Missing"
             })
         }
-        const decodedToken=await jsonwebtoken.decode(token,process.env.ACCESS_KEY_SECRET)
+        const decodedToken=await jsonwebtoken.verify(token,process.env.ACCESS_KEY_SECRET)
         req.user=decodedToken
         next()
     } catch (error) {
