@@ -1,6 +1,7 @@
 const PaginationButtons = ({ tableInstance }) => {
   return (
-    <div className="flex items-center space-x-2">
+<>
+<div className="flex items-center space-x-2">
       <select
         value={tableInstance.getState().pagination.pageSize}
         onChange={(e) => {
@@ -21,7 +22,7 @@ const PaginationButtons = ({ tableInstance }) => {
         }}
         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-md hover:bg-gray-300 transition duration-150 ease-in-out dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
       >
-        {"<<"}
+        {"First Page"}
       </button>
 
       <button
@@ -37,7 +38,17 @@ const PaginationButtons = ({ tableInstance }) => {
       >
         Previous
       </button>
+                <strong>{tableInstance.getState().pagination.pageIndex + 1} of{" "} {tableInstance.getPageCount()}</strong>
 
+      <button
+        disabled={!tableInstance.getCanNextPage()}
+        onClick={() => {
+          tableInstance.setPageIndex(tableInstance.getPageCount() - 1);
+        }}
+        className={`px-4 py-2 bg-transparent rounded-xl shadow-md transition duration-150 ease-in-out cursor-pointer`}
+      >
+        {tableInstance.getPageCount()}
+      </button>
       <button
         disabled={!tableInstance.getCanNextPage()}
         onClick={() => {
@@ -58,9 +69,12 @@ const PaginationButtons = ({ tableInstance }) => {
         }}
         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-md hover:bg-gray-300 transition duration-150 ease-in-out dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
       >
-        {">>"}
+        {"Last Page"}
       </button>
+
+
     </div>
+</>
   );
 };
 

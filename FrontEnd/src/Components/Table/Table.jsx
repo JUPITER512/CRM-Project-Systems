@@ -35,11 +35,12 @@ const Table = () => {
 
   return (
     <>
-      <div className="overflow-x-auto bg-gray-100 dark:bg-gray-900">
-        <div className="p-4">
+      <div className="overflow-x-auto bg-gray-100 dark:bg-gray-900 p-6 rounded-lg shadow-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Data Table</h1>
           <FilterInput value={filter} setValue={setFilter} />
         </div>
-        <table className="min-w-full bg-white border border-gray-300 shadow-lg rounded-lg divide-y divide-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700">
+        <table className="w-full bg-white border border-gray-200 shadow-md divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700">
           <thead className="bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200">
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -47,7 +48,7 @@ const Table = () => {
                   <th
                     onClick={header.column.getToggleSortingHandler()}
                     key={header.id}
-                    className="px-6 py-3 text-left cursor-pointer text-sm font-semibold uppercase tracking-wider border-b border-gray-300 hover:bg-gray-100 transition-colors duration-150 dark:border-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                    className="px-2 py-4 text-center text-sm font-medium uppercase tracking-wider cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -62,12 +63,12 @@ const Table = () => {
             {tableInstance.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="hover:bg-gray-50 transition-colors duration-200 dark:hover:bg-gray-700"
+                className="hover:bg-gray-100 transition-colors duration-300 dark:hover:bg-gray-700"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-6 py-4 whitespace-nowrap text-sm border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800"
+                    className="px-6 py-4 text-sm border-b border-gray-200 dark:border-gray-700"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -77,7 +78,7 @@ const Table = () => {
           </tbody>
         </table>
       </div>
-      <div className="p-4 flex justify-end">
+      <div className="p-4 flex justify-end bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
         <PaginationButtons tableInstance={tableInstance} />
       </div>
     </>

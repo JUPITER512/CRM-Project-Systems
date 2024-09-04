@@ -89,23 +89,18 @@ export const Sign_in = async (req, res) => {
         message: "Invalid Credentials",
       });
     }
-    delete userInDb.password
-    delete userInDb.refreshToken
-    delete userInDb.__v
-    delete userInDb.refreshToken
     const accessToken = userInDb.generateAccessToken();
-    const refreshToken = userInDb.generateRefershToken();
     const options = {
       httpOnly: true,
       secure: true,
     };
     res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("refreshToken", userInDb.refreshToken, options)
       .json({
         message: "Success",
-        data: userInDb,
+        data: userInDb.toJsonobj(),
+        accessToken:accessToken
       });
   } catch (error) {
     console.log("Error in signin ",error)
@@ -326,21 +321,18 @@ export const Refresh_Token = async (req, res) => {
             message: "Invalid Refresh Token",
           });
         }
-        const userId = decoded.id;
+        const userId = decoded._id;
         const user = await User.findById(userId);
-
+        console.log({refreshToken,user:user.refreshToken})
         if (!user || user.refreshToken !== refreshToken) {
           return res.status(403).json({
             message: "User not found or Refresh Token does not match",
           });
         }
         const new_access_token = user.generateAccessToken();
-        const options = {
-          httpOnly: true,
-          secure: true,
-        };
-        res.status(200).cookie("accessToken", new_access_token, options).json({
+        res.status(200).json({
           message: "Access Token refreshed successfully",
+          accessToken:new_access_token
         });
       }
     );

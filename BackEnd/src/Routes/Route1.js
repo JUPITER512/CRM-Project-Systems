@@ -14,7 +14,7 @@ MainRoute.post('/change-password',Change_Password);
 MainRoute.put('/update-user-info',verifyJsonWebToken,Update_Info);
 MainRoute.post('/logout-user',verifyJsonWebToken,Logout);
 MainRoute.post('/update-access-token',Refresh_Token);
-MainRoute.put('/upload-image',verifyJsonWebToken,upload.single('picture'),upload_Picture)
+MainRoute.put('/upload-image',verifyJsonWebToken,upload.single('picture'),upload_Picture);
 
 
 MainRoute.post('/add-customer',verifyJsonWebToken,Add_Customer);

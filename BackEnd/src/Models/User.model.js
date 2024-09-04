@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import jsonwebtoken from "jsonwebtoken";
-import bcrypt from 'bcrypt'
-// import bcrypt from 'bcryptjs'
+// import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 const userSchema=new mongoose.Schema({
     name:{
         type:String,
@@ -74,6 +74,13 @@ userSchema.methods.generateRefershToken=function(){
     }
 )
 }
-
+userSchema.methods.toJsonobj=function(){
+    const user=this;
+    const userObject=user.toObject();
+    delete userObject.password
+    delete userObject.refreshToken;
+    delete userObject.__v;
+    return userObject;
+}
 
 export const User=mongoose.model("User",userSchema)

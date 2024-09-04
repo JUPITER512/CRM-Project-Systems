@@ -2,15 +2,17 @@ import AnimatePage from "@components/AnimatePage";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate=useNavigate();
   const form = useForm();
   const { handleSubmit, register, formState, getValues } = form;
   const { errors } = formState;
 
   async function onSubmit(data) {
     console.log(data);
+    navigate('/Home/Dashboard',{replace:true})
   }
 
   return (
@@ -110,7 +112,7 @@ const SignUp = () => {
             )}
           </div>
 
-          <button className="bg-slate-600 mt-4 mb-2 rounded-[8px] px-8 py-[0.4rem]">
+          <button type="submit" className="bg-slate-600 mt-4 mb-2 rounded-[8px] px-8 py-[0.4rem]">
             Sign Up
           </button>
           <p className="w-[90%] text-center my-2">

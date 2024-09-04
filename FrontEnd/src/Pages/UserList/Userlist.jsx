@@ -1,6 +1,6 @@
 import AnimatePage from "@components/AnimatePage";
-import PaginationButtons from "@components/Table/PaginationButtons";
 import Table from "@components/Table/Table";
+import { Outlet } from "react-router-dom";
 const tableData = {
   name: ["Ali", "Murtaza", "Bokhari", "Syed Ali"],
   email: [

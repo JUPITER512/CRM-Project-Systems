@@ -8,7 +8,7 @@ const PictureUpload = () => {
       <img
         src=""
         alt="user-image"
-        className="rounded-full h-24 w-24 bg-cover mb-4"
+        className="rounded-full h-24 w-24 bg-cover mb-4 border-2"
       />
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 items-center" encType="multipart/form-data">
         <div className="flex items-center j ustify-center w-full">
