@@ -6,9 +6,15 @@ cloudinary.config({
     api_key:process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
-async function Cloudinary_Uplooad(filepath) {
+async function Cloudinary_Upload(filepath,public_id=null) {
     try {
-        if(!filepath)return null
+        if (!filepath) {
+            console.error("Filepath is required");
+            return null;
+        }
+        if(public_id){
+            await cloudinary.uploader.destroy(public_id)
+        }
         const response=await cloudinary.uploader.upload(filepath,{
             resource_type:"image",
         })
@@ -20,4 +26,5 @@ async function Cloudinary_Uplooad(filepath) {
         return null
     }
 }
-export default Cloudinary_Uplooad
+
+export default Cloudinary_Upload

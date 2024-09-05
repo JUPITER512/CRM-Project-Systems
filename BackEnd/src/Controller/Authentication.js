@@ -2,7 +2,7 @@ import jsonwebtoken from "jsonwebtoken";
 import { User } from "../Models/User.model.js";
 import { generateOTP } from "../Utils/GenerateOtp.js";
 import { sendOTP } from "../Utils/NodeMailer.js";
-import Cloudinary_Uplooad from "../Utils/Cloudinary.js";
+import Cloudinary_Upload from "../Utils/Cloudinary.js";
 import fs from 'fs';
 
 export const Sign_up = async (req, res) => {
@@ -344,37 +344,49 @@ export const Refresh_Token = async (req, res) => {
   }
 };
 
-export const upload_Picture = async (req, res) => {
+export const handleImage = async (req, res) => {
   try {
-    const userId=req.user._id;
-    if(!userId){
+    const userId = req.user._id;
+    if (!userId) {
       return res.status(400).json({
-        message:"User ID not given"
-      })
+        message: "User ID not given"
+      });
     }
-    const userInDb=await User.findById(userId);
-    if(!userInDb.verify){
+    
+    const userInDb = await User.findById(userId);
+    if (!userInDb.verify) {
       return res.status(401).json({
-        message:"Email is not verified"
-      })
+        message: "Email is not verified"
+      });
     }
-    const response=await Cloudinary_Uplooad(req.file.path);
-    userInDb.picture=response.secure_url;
-    await userInDb.save();
-    res.status(200).json({
-      message:"Image Upload Successfully"
-    })
-  } catch (error) {
-    return res.status(500).json({
-      message:"Internal Server Error",
-      error:error.message
-      
-    })
-  }finally{
-    fs.unlink(req.file.path, (unlinkError) => {
-      if (unlinkError) {
-        console.error("Failed to delete the file:", unlinkError);
+
+    let cloudinaryResponse;
+    if (req.file) {
+      if (userInDb.pictureId) {
+        cloudinaryResponse = await Cloudinary_Upload(req.file.path, userInDb.pictureId);
+      } else {
+        cloudinaryResponse = await Cloudinary_Upload(req.file.path);
       }
+      userInDb.pictureId = cloudinaryResponse.public_id;
+      userInDb.picture = cloudinaryResponse.secure_url;
+      await userInDb.save();
+    }
+
+    res.status(200).json({
+      message: userInDb.pictureId ? "Image Updated Successfully" : "Image Uploaded Successfully"
     });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
+  } finally {
+    if (req.file) {
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) {
+          console.error("Failed to delete the file:", unlinkError);
+        }
+      });
+    }
   }
 };

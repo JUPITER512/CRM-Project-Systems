@@ -10,7 +10,7 @@ import Adduser from "@pages/AddUser/Adduser";
 import ProfileSettings from "@pages/ProfileSettings/ProfileSettings";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "@pages/NotFoundPage/NotFound";
-
+import axios from "axios";
 const router = createBrowserRouter([
   {
     path: "/Sign-in",
@@ -37,39 +37,48 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: 'Dashboard',
+        path: "Dashboard",
         element: <Dashboard />,
       },
       {
-        path: 'CustomerList',
+        path: "CustomerList",
         element: <Userlist />,
       },
       {
-        path: 'AddCustomer',
+        path: "AddCustomer",
         element: <Adduser />,
       },
       {
-        path: 'ProfileSettings',
+        path: "ProfileSettings",
         element: <ProfileSettings />,
       },
       {
-        path: 'Customer/View-Customer-Info/:id',
+        path: "Customer/View-Customer-Info/:id",
         element: <Adduser />,
       },
       {
-        path: 'Customer/Update-Customer-Info/:id',
+        path: "Customer/Update-Customer-Info/:id",
         element: <Adduser />,
       },
-
     ],
   },
   {
-    path:"*",
-    element:<NotFound/>
-  }
+    path: "*",
+    element: <NotFound />,
+  },
 ]);
 export default function App() {
-  return (
-    <RouterProvider router={router} />
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:3000/api",
+    timeout: 10000,
+  });
+  axiosInstance.interceptors.request.use(
+    function (config) {
+      console.log(config);
+    },
+    function (err) {
+      console.log(err);
+    }
   );
+  return <RouterProvider router={router} />;
 }

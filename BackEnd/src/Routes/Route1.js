@@ -1,5 +1,5 @@
 import express from "express";
-import { Change_Password, Forget_Password, Logout, Refresh_Token, Sign_in, Sign_up, Update_Info, upload_Picture, verifyAccount } from "../Controller/Authentication.js";
+import { Change_Password, Forget_Password, handleImage, Logout, Refresh_Token, Sign_in, Sign_up, Update_Info, verifyAccount } from "../Controller/Authentication.js";
 import {verifyJsonWebToken} from '../Middlewear/verifyJwt.js'
 import { Add_Customer, Get_Customer, Remove_customer, Update_customer_info } from "../Controller/Customer.js";
 import {upload} from '../Middlewear/Multer.js'
@@ -14,8 +14,8 @@ MainRoute.post('/change-password',Change_Password);
 MainRoute.put('/update-user-info',verifyJsonWebToken,Update_Info);
 MainRoute.post('/logout-user',verifyJsonWebToken,Logout);
 MainRoute.post('/update-access-token',Refresh_Token);
-MainRoute.put('/upload-image',verifyJsonWebToken,upload.single('picture'),upload_Picture);
-
+MainRoute.put('/upload-image',verifyJsonWebToken,upload.single('picture'),handleImage);
+MainRoute.patch('/update-image',verifyJsonWebToken,upload.single('picture'),handleImage)
 
 MainRoute.post('/add-customer',verifyJsonWebToken,Add_Customer);
 MainRoute.get('/get-customer',verifyJsonWebToken,Get_Customer);
