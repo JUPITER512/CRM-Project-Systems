@@ -4,10 +4,10 @@ const animation = {
   animate: { opacity: 1},
   exit: { opacity: 0, },
 };
-const AnimatePage = ({ children }) => {
+const AnimatePage = ({ children ,duration=1}) => {
   return (
     <motion.div
-      transition={{ duration:1}}
+      transition={{ duration:duration}}
       variants={animation}
       initial="inital"
       animate="animate"
