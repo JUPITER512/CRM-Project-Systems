@@ -4,16 +4,17 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 function getJwtDataFromLocalStorage() {
-  const token = localStorage.getItem("crmSuiteToken") || null;
+  const token = localStorage.getItem("accessToken") || null;
   return token;
 }
 axiosInstance.interceptors.request.use(
   function (config) {
     const token = getJwtDataFromLocalStorage();
     if (!token) {
-      return;
+      return config;
     }
     config.headers.Authorization = token;
+    return config
   },
   function (err) {
     return Promise.reject(err);
@@ -25,21 +26,16 @@ axiosInstance.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error?.response?.status === 401 && !originalRequest?._retry) {
       originalRequest._retry = true;
       try {
-        const refreshToken = localStorage.getItem("crmSuiteRefreshToken");
-        const response = await axiosInstance.post("/update-access-token", {
-          refresh: refreshToken,
-        });
-        const { access } = response.data;
-        localStorage.setItem("crmSuiteToken", access);
-        axiosInstance.defaults.headers.Authorization = access;
+        const response = await axiosInstance.post("/update-access-token");
+        const { accessToken } = response.data;
+        localStorage.setItem("accessToken", accessToken);
+        axiosInstance.defaults.headers.Authorization = `${accessToken}`;;
         return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        localStorage.removeItem("crmSuiteToken");
-        localStorage.removeItem("crmSuiteRefreshToken");
-        window.location.href = "/login";
+      } catch (error) {
+        window.location.href = "/Sign-in";
       }
     }
     return Promise.reject(error);
@@ -56,16 +52,16 @@ const Axios = async ({ requestType, url, header, params, query, data }) => {
     const trimmedUrl = url.trim();
     switch (requestType.toLowerCase().trim()) {
       case "get":
-        response = await axios.get(trimmedUrl, options);
+        response = await axiosInstance.get(trimmedUrl, options);
         break;
       case "post":
-        response = await axios.post(trimmedUrl, data, options);
+        response = await axiosInstance.post(trimmedUrl, data, options);
         break;
       case "delete":
-        response = await axios.delete(trimmedUrl, options);
+        response = await axiosInstance.delete(trimmedUrl, options);
         break;
       case "put":
-        response = await axios.delete(trimmedUrl, data, options);
+        response = await axiosInstance.put(trimmedUrl, data, options);
         break;
       default:
         throw new Error(`Unsupported request type: ${requestType}`);

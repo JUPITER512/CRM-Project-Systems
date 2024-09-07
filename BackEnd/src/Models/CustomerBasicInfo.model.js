@@ -1,19 +1,22 @@
 import mongoose from 'mongoose';
 
 const AddressSchema = new mongoose.Schema({
-    addLine1: { type: String, trim: true, lowercase: true },
-    addLine2: { type: String, trim: true, lowercase: true },
+    address1: { type: String, trim: true, lowercase: true },
+    address2: { type: String, trim: true, lowercase: true },
     city: { type: String, trim: true, lowercase: true },
     state: { type: String, trim: true, lowercase: true },
-    zipCode: { type: Number }
+    zipCode: { type: Number },
+    country:{type:String}
 });
-
 const customerSchema = new mongoose.Schema({
     addedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
         index:true
+      },
+      id:{
+        type:Number
       },
     fullName: {
         type: String,
@@ -48,7 +51,7 @@ const customerSchema = new mongoose.Schema({
     address: AddressSchema,
     customerCommunicationPreference: { type: String },
     customerStatus: {
-        type: Boolean,
+        type: String,
         required: true
     },
     customerCompanyName: {
@@ -63,4 +66,37 @@ const customerSchema = new mongoose.Schema({
     additionalInfoSourceOfLead: { type: String }
 }, { timestamps: true });
 
-export  const Customer=mongoose.model("Customer",customerSchema)
+const sequenceSchema = new mongoose.Schema({
+    model: { type: String, required: true, unique: true },
+    sequence_value: { type: Number, default: 0 }
+});
+
+const Sequence = mongoose.model('Sequence', sequenceSchema);
+customerSchema.pre('save', async function (next) {
+    if (this.isNew) {
+        try {
+            const sequence = await Sequence.findOneAndUpdate(
+                { model: 'Customer' },
+                { $inc: { sequence_value: 1 } },
+                { new: true, upsert: true }
+            );
+            this.id = sequence.sequence_value;
+        } catch (error) {
+            return next(error);
+        }
+    }
+    next();
+});
+
+customerSchema.post('deleteOne', async function (doc, next) {
+  try {
+    await Sequence.findOneAndUpdate(
+      { model: 'Customer' },
+      { $inc: { sequence_value: -1 } }
+    );
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+export  const Customer=mongoose.model("Customer",customerSchema);

@@ -5,6 +5,33 @@ import { sendmail } from "../Utils/NodeMailer.js";
 import Cloudinary_Upload from "../Utils/Cloudinary.js";
 import fs from 'fs';
 
+export const EmailVerification=async(req,res)=>{
+  try {
+    const {userId}=req.params;
+    if(!userId){
+        return res.status(400).json({
+          message:"User Id Is required",
+        })
+    }
+    const userInDb=await User.findById(userId);
+    if(!userInDb){
+      return res.status(400).json({
+        message:"Invalid User Id/User Not Found"
+      })
+    }
+    userInDb.verify=true;
+    userInDb.save();
+    return res.status(200).json({
+      message:"Email Verified"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message:"Internal Server Error",
+      error:error.message
+    })
+  }
+}
+
 export const Sign_up = async (req, res) => {
   try {
     const { email, name, password, confirmPassword } = req.body;
@@ -51,6 +78,7 @@ export const Sign_up = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Internal Server Error",
+      error:error.message
     });
   }
 };
@@ -82,7 +110,8 @@ export const Sign_in = async (req, res) => {
         message: "Please Verify Your Email",
       });
     }
-    const checkPassword = userInDb.isPasswordCorrect(password);
+    const checkPassword =await userInDb.isPasswordCorrect(password);
+    console.log(checkPassword)
     if (!checkPassword) {
       return res.status(401).json({
         message: "Invalid Credentials",
@@ -111,7 +140,6 @@ export const Sign_in = async (req, res) => {
 };
 export const verifyAccount = async (req, res) => {
   const { email, id } = req.query;
-  console.log(req.params);
   if (!email && !id) {
     return res.status(400).json({
       message: "Invalid Link",
@@ -162,7 +190,7 @@ export const Forget_Password = async (req, res) => {
     const otp = generateOTP();
     userInDatabase.otp = otp;
     userInDatabase.save();
-    // sendmail(userInDatabase.email, otp);
+    await sendmail({email:userInDatabase.email,code:otp,subject:"Crm Suite Password Change"})
     return res.status(200).json({
       message: "Code is sent to your Email",
     });
@@ -175,7 +203,7 @@ export const Forget_Password = async (req, res) => {
 };
 export const Verify_Otp = async (req, res) => {
   try {
-    const { otp } = req.body;
+    const { otp ,email} = req.body;
     if (!otp) {
       return res.status(400).json({
         message: "No Otp is Provided",
@@ -194,7 +222,7 @@ export const Verify_Otp = async (req, res) => {
         message: "Email Not Verified",
       });
     }
-    user.otp = null;
+    user.otp = undefined;
     await user.save();
     return res.status(200).json({
       message: "OTP verified successfully",
@@ -251,14 +279,21 @@ export const Change_Password = async (req, res) => {
 export const Update_Info = async (req, res) => {
   try {
     const userId = req.user._id;
+    console.log(userId)
     if (!userId) {
       return res.status(400).json({ message: "Email Not Verified" });
     }
-    const { newData } = req.body;
-    const updateUserInfo = await User.findByIdAndUpdate(id, newData, {
+    const data=req.body
+    const updateUserInfo = await User.findByIdAndUpdate(userId, {
+      name: data?.name,
+      contact: data?.contact,
+      address: data?.address,
+      companyName: data?.companyName, 
+    }, {
       new: true,
       runValidators: true,
-    });
+      upsert: true
+    }).select('-password -refreshToken');
     if (!updateUserInfo) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -267,6 +302,7 @@ export const Update_Info = async (req, res) => {
     }
     res.status(200).json({
       message: "User updated successfully",
+      data:updateUserInfo
     });
   } catch (error) {
     res.status(500).json({

@@ -1,6 +1,7 @@
 import AnimatePage from "@components/AnimatePage";
 import PictureUpload from "./PictureUpload";
 import { useForm } from "react-hook-form";
+import Axios from "@hooks/Axios";
 const ProfileSettings = () => {
   const form = useForm({
     defaultValues: {
@@ -11,12 +12,33 @@ const ProfileSettings = () => {
       companyName: "Your Comapny",
     },
   });
-  const { register, handleSubmit, formState } = form;
+  const { register, handleSubmit, formState ,reset,setValue} = form;
   const { errors } = formState;
   const isFormEdited = formState.isDirty;
 
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      console.log(data)
+      const response=await Axios({
+        requestType:'put',
+        url:'/update-user-info',
+        data:{
+          name:data.name,
+          contact:data.contact,
+          address:data.address,
+          companyName:data.companyName
+        }
+      })
+      if(response.status==200){
+        const updatedData = response.data.data;
+        setValue('name', updatedData.name);
+        setValue('contact', updatedData.contact);
+        setValue('address', updatedData.address);
+        setValue('companyName', updatedData.companyName);
+      }
+    } catch (error) {
+      console.log(error)
+    }
   };
   return (
     <AnimatePage>
@@ -55,11 +77,12 @@ const ProfileSettings = () => {
                 Email
               </label>
               <input
+              disabled={true}
                 {...register("email")}
                 type="text"
                 id="email"
                 defaultValue="abc@example.com"
-                className="mt-1 p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200 "
+                className="mt-1 p-2 cursor-not-allowed border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200 "
               />
               {errors.email && (
                 <p className="text-red-600 text-sm">{errors.email?.message}</p>
@@ -126,7 +149,7 @@ const ProfileSettings = () => {
               )}
             </div>
             <button
-              type="submit" // Assuming this button is meant to submit a form
+              type="submit" 
               className={`hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg px-6 py-2 ${
                 !isFormEdited ? "bg-blue-300 dark:bg-blue-300 cursor-not-allowed" : "bg-blue-500"
               }`}

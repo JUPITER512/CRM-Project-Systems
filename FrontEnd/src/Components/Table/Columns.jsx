@@ -3,7 +3,9 @@ import { RiEditCircleFill } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import ButtonAnimation from "@components/ButtonAnimation";
-
+import Axios from "@hooks/Axios";
+import { TableData } from "../../Store/TableData";
+import { useSetRecoilState } from "recoil";
 export const Columns = [
   {
     header: "ID⬆️⬇️",
@@ -12,7 +14,7 @@ export const Columns = [
   },
   {
     header: "Name⬆️⬇️",
-    accessorKey: "name",
+    accessorKey: "fullName",
     cell: (info) => <p className=" text-center">{info.getValue()}</p>,
   },
   {
@@ -22,20 +24,20 @@ export const Columns = [
   },
   {
     header: "Contact No.⬆️⬇️",
-    accessorKey: "contact",
+    accessorKey: "primaryPhone",
     cell: (info) => <p className=" text-center">{info.getValue()}</p>,
   },
   {
     header: "Country⬆️⬇️",
-    accessorKey: "country",
+    accessorKey: "address.country",
     cell: (info) => <p className=" text-center">{info.getValue()}</p>,
   },
   {
     header: "Status⬆️⬇️",
-    accessorKey: "status",
+    accessorKey: "customerStatus",
     cell: (info) => (
       <>
-        {info.getValue() ? (
+        {info.getValue().toLowerCase()=='active' ? (
           <p className="bg-green-400 border border-green-500 text-gray-800 text-center p-1 rounded-lg font-semibold">
             Active
           </p>
@@ -51,9 +53,21 @@ export const Columns = [
     header: "Action",
     id: "action",
     cell: (info) => {
-      const id = info.row.original.id;
+      const id = info.row.original._id;
+      const setState=useSetRecoilState(TableData)
       async function handleDelete(id) {
-        console.log("User Deleted with id ", id);
+        try {
+          const response=await Axios({
+            requestType:"delete",
+            url:'/remove-customer',
+          })
+          if(response.status==200){
+            console.log("Customer remove from list")
+            setState
+          }
+        } catch (error) {
+          console.log(error.message)
+        }
       }
       return (
         <div className="flex  justify-center items-center gap-2 ">

@@ -18,12 +18,8 @@ const SignUp = () => {
       });
       if (response.status == 200) {
         console.log("Account Created");
-<<<<<<< HEAD
-        navigate('/Sign-up',{replace:true})
-=======
-        navigate("/api/sign-in", { replace: true });
+        navigate("/Sign-In", { replace: true });
         reset();
->>>>>>> 9981cd9b43c8af7d109836a9feee411559404955
       }
     } catch (error) {
       console.log(`Error while signin in`);

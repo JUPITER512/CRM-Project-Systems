@@ -33,7 +33,7 @@ const userSchema=new mongoose.Schema({
         type:String,
         trim:true,
     },
-    companyname:{
+    companyName:{
         type:String,
         trim:true,
     },
@@ -44,6 +44,9 @@ const userSchema=new mongoose.Schema({
         type:Boolean
     },
     refreshToken:{
+        type:String
+    },
+    contact:{
         type:String
     }
 },{timestamps:true})

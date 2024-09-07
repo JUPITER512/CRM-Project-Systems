@@ -1,6 +1,6 @@
 import {jwtDecode} from 'jwt-decode';
 import { useState, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 const decodeJwt = (crmToken, enteredEmail) => {
   try {
     const decoded = jwtDecode(crmToken);
@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }) => {
   const [state, setState] = useState(null);
   const navigate=useNavigate()
   useEffect(() => {
-    const tokenValue = localStorage.getItem('crmSuiteToken');
+    const tokenValue = localStorage.getItem('accessToken');
     const enteredEmail = localStorage.getItem('enteredEmail');
     
     if (!tokenValue || !enteredEmail) {

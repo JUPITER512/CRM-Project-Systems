@@ -11,7 +11,7 @@ export default function AuthContextProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("crmSuiteToken");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       setIsAuthenticated(true);
     } else {

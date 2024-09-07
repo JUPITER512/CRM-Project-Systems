@@ -1,64 +1,53 @@
 import { Customer } from "../Models/CustomerBasicInfo.model.js";
 
-export const Add_Customer = async (req, res) => {
-  try {
-    const {
-      fullName,
-      gender,
-      dob,
-      email,
-      primaryPhone,
-      alternativePhone,
-      address,
-      customerCommunicationPreference,
-      customerStatus,
-      customerCompanyName,
-      customerJobTitle,
-      additionalInfoNote,
-      additionalInfoSourceOfLead,
-    } = req.body;
+  export const Add_Customer = async (req, res) => {
+    try {
+      const {
+        Additional,
+        address,
+        basic,
+        communicationStatus,
+        company
+      } = req.body;
+      if (!req.user || !req.user._id) {
+        return res.status(400).json({ message: "User not authenticated" });
+      }
+      const manager_id = req.user._id;
+      const newCustomerAddition = await Customer.create({
+        addedBy:manager_id || null,
+        fullName:basic?.Name || null,
+        email:basic?.email || null,
+        gender:basic?.gender || null,
+        primaryPhone:basic?.primaryPhone || null,
+        alternativePhone:basic?.alternativePhone || null,
+        dob: basic?.dob ? new Date(basic?.dob) : null,
+        address:address || null,
+        customerCommunicationPreference:communicationStatus?.CommunicationPreferences || null,
+        customerStatus:communicationStatus?.status || null,
+        customerCompanyName:company?.JobTitle || null, 
+        customerJobTitle:company?.name || null,
+        additionalInfoNote:Additional?.Notes || null,
+        additionalInfoSourceOfLead:Additional?.SourceofLead || null
 
-    if (!req.user || !req.user._id) {
-      return res.status(400).json({ message: "User not authenticated" });
+      })
+      res.status(200).json({
+        message: "Customer added successfully",
+        customer: newCustomerAddition,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Internal Server Error",
+        error: error.message,
+      });
     }
-    const manager_id = req.user._id;
-    const newCustomerAddition = await Customer.create({
-      addedBy: manager_id,
-      fullName,
-      gender,
-      dob,
-      email,
-      primaryPhone,
-      alternativePhone,
-      address,
-      customerCommunicationPreference,
-      customerStatus,
-      customerCompanyName,
-      customerJobTitle,
-      additionalInfoNote,
-      additionalInfoSourceOfLead,
-    });
-
-    res.status(200).json({
-      message: "Customer added successfully",
-      customer: newCustomerAddition,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message,
-    });
-  }
-};
+  };
 
 export const Get_Customer = async (req, res) => {
   try {
     const page=parseInt(req.query.page) || 1;
     const limit=parseInt(req.query.limit) || 10;
+    const from=parseInt(req.query.from) || 0;
     const skip = (page - 1) * limit;
-    // (1-1)*10==-0 items will be skip for page 1
-    // (1-1)*10==10 items will be skip for page 2
-    // (2-1)*10==20 items will be skip for page 3
     const customers = await Customer.find({
       addedBy:req.user._id
     })
@@ -80,6 +69,30 @@ export const Get_Customer = async (req, res) => {
   }
 };
 
+export const Get_Single_Customer=async(req,res)=>{
+  try {
+    const {id}=req.params;
+    if(!id){
+      return res.status(400).json({
+        message:"Id Is not given"
+      })
+    }
+    const customerInDb=await Customer.findById(id);
+    if(!customerInDb){
+      return res.status(400).json({
+        message:"Invalid Id/No Customer Found"
+      })
+    }
+    res.status(200).json({
+      message:"Customer Found",
+      data:customerInDb
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message:"Internal Server Error"
+    })
+  }
+}
 export const Remove_customer = async (req, res) => {
   try {
 

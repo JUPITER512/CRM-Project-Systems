@@ -1,13 +1,10 @@
-import React from 'react';
-
 const PaginationButtons = ({ tableInstance }) => {
   const { getState, setPageSize, setPageIndex, previousPage, nextPage, getCanPreviousPage, getCanNextPage, getPageCount } = tableInstance;
   const { pagination } = getState();
   const pageCount = getPageCount();
-  
+
   return (
     <div className="flex items-center space-x-2">
-      {/* Page Size Selector */}
       <select
         value={pagination.pageSize}
         onChange={(e) => setPageSize(Number(e.target.value))}
@@ -20,7 +17,6 @@ const PaginationButtons = ({ tableInstance }) => {
         ))}
       </select>
 
-      {/* First Page Button */}
       <button
         onClick={() => setPageIndex(0)}
         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-md hover:bg-gray-300 transition-colors duration-150 ease-in-out dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
@@ -28,7 +24,6 @@ const PaginationButtons = ({ tableInstance }) => {
         First
       </button>
 
-      {/* Previous Page Button */}
       <button
         disabled={!getCanPreviousPage()}
         onClick={previousPage}
@@ -41,17 +36,15 @@ const PaginationButtons = ({ tableInstance }) => {
         Prev
       </button>
 
-      {/* Page Indicator */}
       <span className="px-2">
         <strong>
           {pagination.pageIndex + 1} of {pageCount}
         </strong>
       </span>
 
-      {/* Next Page Button */}
       <button
         disabled={!getCanNextPage()}
-        onClick={nextPage}
+        onClick={() => nextPage()}
         className={`px-4 py-2 rounded-lg shadow-md transition-colors duration-150 ease-in-out ${
           getCanNextPage()
             ? "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
@@ -61,7 +54,6 @@ const PaginationButtons = ({ tableInstance }) => {
         Next
       </button>
 
-      {/* Last Page Button */}
       <button
         onClick={() => setPageIndex(pageCount - 1)}
         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-md hover:bg-gray-300 transition-colors duration-150 ease-in-out dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"

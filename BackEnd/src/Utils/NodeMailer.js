@@ -43,7 +43,7 @@ export async function sendmail({ email, code = null, subject, verificationLinkco
           <h2 style="color: #4CAF50;">Verify Your Email Address</h2>
           <p>Dear User,</p>
           <p>Thank you for using our CRM suite. Please click the link below to verify your email address:</p>
-          <a href="http://localhost:3000/email-verification/${verificationLinkcode}" style="font-size: 18px; color: #ff5722;">Verify Email</a>
+          <a href="http://localhost:3000/api/email-verification/${verificationLinkcode}" style="font-size: 18px; color: #ff5722;">Verify Email</a>
           <p>If you did not create an account, please ignore this email.</p>
           <br>
           <p>Best regards,</p>

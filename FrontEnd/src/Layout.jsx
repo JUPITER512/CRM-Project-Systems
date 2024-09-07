@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "./assets/logo.jpg";
-import React, { useEffect, useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import ThemeSwitcher from "@components/ThemeSwitcher";
@@ -11,7 +11,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
-
+import Axios from "@hooks/Axios";
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
   { page: "CustomerList", id: 2, icon: <CiCircleList /> },
@@ -24,7 +24,7 @@ const Layout = () => {
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated,setIsAuthenticated } = useAuthContext();
 
   function handleSidebar() {
     setSidebar(!sidebar);
@@ -33,8 +33,17 @@ const Layout = () => {
     }
   }
 
-  function handleLogout() {
-    navigate("/Sign-in", { replace: true });
+ async function handleLogout() {
+    try {
+      const res=await Axios({requestType:'get',url:'/logout-user'})
+      if(res.status==200){
+        navigate("/Sign-in", { replace: true });
+        setIsAuthenticated(false)
+        localStorage.clear()
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
   }
   function handleUserMenu() {
     setUserMenu(!userMenu);
@@ -48,11 +57,11 @@ const Layout = () => {
       setUserMenu(!userMenu);
     }
   }
-  // useEffect(()=>{
-  //   if(!isAuthenticated){
-  //     navigate('/Sign-in')
-  //   }
-  // },[])
+  useEffect(()=>{
+    if(!isAuthenticated){
+      navigate('/Sign-in')
+    }
+  },[])
 
   return (
     <div className="w-screen h-screen relative bg-[#e0e7e9] dark:bg-gradient-to-bl dark:bg-slate-400 transition-colors duration-200 ease-linear">

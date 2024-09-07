@@ -2,38 +2,38 @@ import { useForm } from "react-hook-form";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
 import { Link, useNavigate } from "react-router-dom";
 import AnimatePage from "@components/AnimatePage";
-<<<<<<< HEAD
 import Axios from "@hooks/Axios";
-=======
 import { useAuthContext } from "@context/Auth";
->>>>>>> 9981cd9b43c8af7d109836a9feee411559404955
 const Signin = () => {
   const form = useForm();
   const navigate=useNavigate()
   const { handleSubmit, register, formState,reset } = form;
   const { errors } = formState;
-  const authContext=useAuthContext
+  const authContext=useAuthContext()
 
   async function onSubmit(data) {
-<<<<<<< HEAD
     try {
-      const response=await Axios({requestType:"post",data:data,url:"/api/sign-in"})
+      const response=await Axios({requestType:"post",data:data,url:"/sign-in"})
+      localStorage.setItem('enteredEmail',data.email)
       if(response.status==200){
+        localStorage.removeItem('enteredEmail')
+        const userdataObject=response.data
+        for(let [key,value] of Object.entries(userdataObject)){
+          if(key=='data' && typeof value === 'object'){
+              Object.assign(localStorage,value)
+            }else{
+              localStorage.setItem(key,value)
+            }
+        }
+        localStorage.setItem("enteredEmail",data.email)
+        authContext.setIsAuthenticated(true)
         navigate('/Home/Dashboard',{replace:true})
       }
     } catch (error) {
       console.log(error.message)
     }finally{
-      reset()
+      // reset()
     }
-=======
-    localStorage.setItem('enteredEmail',data.email)
-    const res=await fetch('/api/helloworld')
-    // if(res.status==200){
-    //   localStorage.removeItem('enteredEmail')
-    //   authContext.setIsAuthenticated(true)
-    // }
->>>>>>> 9981cd9b43c8af7d109836a9feee411559404955
   }
   return (
     <>
