@@ -1,14 +1,25 @@
 import { useForm } from "react-hook-form";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AnimatePage from "@components/AnimatePage";
+import Axios from "@hooks/Axios";
 const Signin = () => {
   const form = useForm();
-  const { handleSubmit, register, formState } = form;
+  const navigate=useNavigate()
+  const { handleSubmit, register, formState,reset } = form;
   const { errors } = formState;
 
   async function onSubmit(data) {
-    console.log(data);
+    try {
+      const response=await Axios({requestType:"post",data:data,url:"/api/sign-in"})
+      if(response.status==200){
+        navigate('/Home/Dashboard',{replace:true})
+      }
+    } catch (error) {
+      console.log(error.message)
+    }finally{
+      reset()
+    }
   }
   return (
     <>

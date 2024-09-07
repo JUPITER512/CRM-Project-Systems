@@ -12,5 +12,11 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, 'src/Pages'),
       '@utils': path.resolve(__dirname, 'src/Utils'),
     },
-  }
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000' // Proxy '/api' to backend
+    },
+  },
 });
+

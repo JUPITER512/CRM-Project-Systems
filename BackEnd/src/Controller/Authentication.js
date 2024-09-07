@@ -1,7 +1,7 @@
 import jsonwebtoken from "jsonwebtoken";
 import { User } from "../Models/User.model.js";
 import { generateOTP } from "../Utils/GenerateOtp.js";
-import { sendOTP } from "../Utils/NodeMailer.js";
+import { sendmail } from "../Utils/NodeMailer.js";
 import Cloudinary_Upload from "../Utils/Cloudinary.js";
 import fs from 'fs';
 
@@ -44,8 +44,7 @@ export const Sign_up = async (req, res) => {
     newUser.refreshToken = refreshToken;
     newUser.verify = false;
     await newUser.save();
-    //send email here with email object id
-
+    sendmail({email:newUser.email,subject:'CRM Suite Email Verification Link',verificationLinkcode:newUser._id})
     res.status(200).json({
       message: "Account created Successfully with Verification Link",
     });
@@ -163,7 +162,7 @@ export const Forget_Password = async (req, res) => {
     const otp = generateOTP();
     userInDatabase.otp = otp;
     userInDatabase.save();
-    sendOTP(userInDatabase.email, otp);
+    // sendmail(userInDatabase.email, otp);
     return res.status(200).json({
       message: "Code is sent to your Email",
     });

@@ -1,11 +1,10 @@
 import AnimatePage from "@components/AnimatePage";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Axios from "@hooks/Axios";
 const SignUp = () => {
-  const navigate = useNavigate();
+  const navigate=useNavigate()
   const form = useForm();
   const { handleSubmit, register, formState, getValues } = form;
   const { errors } = formState;
@@ -14,16 +13,16 @@ const SignUp = () => {
     try {
       const response = await Axios({
         requestType: "post",
-        url: "/sign-up",
+        url: "/api/sign-up",
         data: data,
       });
       if (response.status == 200) {
         console.log("Account Created");
+        navigate('/Sign-up',{replace:true})
       }
     } catch (error) {
       console.log(`Error while signin in`)
     }
-    // navigate('/Home/Dashboard',{replace:true})
   }
 
   return (
