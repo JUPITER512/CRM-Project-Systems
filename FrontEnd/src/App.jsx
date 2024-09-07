@@ -10,7 +10,9 @@ import Adduser from "@pages/AddUser/Adduser";
 import ProfileSettings from "@pages/ProfileSettings/ProfileSettings";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "@pages/NotFoundPage/NotFound";
-import axios from "axios";
+import Changepassword from "@pages/ChangePassword/Changepassword";
+import AuthContextProvider from "@context/Auth";
+import ProtectedRoute from "@hooks/ProtectedRoute";
 const router = createBrowserRouter([
   {
     path: "/Sign-in",
@@ -34,7 +36,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/Home",
-    element: <Layout />,
+    element: (
+      // <ProtectedRoute>
+        <Layout />
+      /* </ProtectedRoute> */
+    ),
     children: [
       {
         path: "Dashboard",
@@ -53,6 +59,10 @@ const router = createBrowserRouter([
         element: <ProfileSettings />,
       },
       {
+        path: "Change-Password",
+        element: <Changepassword />,
+      },
+      {
         path: "Customer/View-Customer-Info/:id",
         element: <Adduser />,
       },
@@ -68,17 +78,9 @@ const router = createBrowserRouter([
   },
 ]);
 export default function App() {
-  const axiosInstance = axios.create({
-    baseURL: "http://localhost:3000/api",
-    timeout: 10000,
-  });
-  axiosInstance.interceptors.request.use(
-    function (config) {
-      console.log(config);
-    },
-    function (err) {
-      console.log(err);
-    }
+  return (
+    <AuthContextProvider>
+      <RouterProvider router={router} />
+    </AuthContextProvider>
   );
-  return <RouterProvider router={router} />;
 }

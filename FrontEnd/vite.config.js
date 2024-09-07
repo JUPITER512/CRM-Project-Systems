@@ -13,10 +13,18 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, 'src/Utils'),
     },
   },
+<<<<<<< HEAD
   server: {
     proxy: {
       '/api': 'http://localhost:3000' // Proxy '/api' to backend
     },
   },
+=======
+  server:{
+    proxy:{
+      '/api':'http://localhost:3000'
+    }
+  }
+>>>>>>> 9981cd9b43c8af7d109836a9feee411559404955
 });
 

@@ -30,7 +30,7 @@ const Table = () => {
       globalFilter: filter
     },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setFilter
+    onGlobalFilterChange: setFilter,
   });
 
   return (
@@ -41,14 +41,14 @@ const Table = () => {
           <FilterInput value={filter} setValue={setFilter} />
         </div>
         <table className="w-full bg-white border border-gray-200 shadow-md divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700">
-          <thead className="bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200">
+          <thead className="bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200 ">
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     onClick={header.column.getToggleSortingHandler()}
                     key={header.id}
-                    className="px-2 py-4 text-center text-sm font-medium uppercase tracking-wider cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="p-6 text-center text-sm font-medium uppercase tracking-wider cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -68,7 +68,7 @@ const Table = () => {
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-6 py-4 text-sm border-b border-gray-200 dark:border-gray-700"
+                    className="p-6 text-sm border-b border-gray-200 dark:border-gray-700"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>

@@ -6,7 +6,7 @@ import Axios from "@hooks/Axios";
 const SignUp = () => {
   const navigate=useNavigate()
   const form = useForm();
-  const { handleSubmit, register, formState, getValues } = form;
+  const { handleSubmit, register, formState, getValues, reset } = form;
   const { errors } = formState;
 
   async function onSubmit(data) {
@@ -18,10 +18,15 @@ const SignUp = () => {
       });
       if (response.status == 200) {
         console.log("Account Created");
+<<<<<<< HEAD
         navigate('/Sign-up',{replace:true})
+=======
+        navigate("/api/sign-in", { replace: true });
+        reset();
+>>>>>>> 9981cd9b43c8af7d109836a9feee411559404955
       }
     } catch (error) {
-      console.log(`Error while signin in`)
+      console.log(`Error while signin in`);
     }
   }
 
@@ -31,18 +36,25 @@ const SignUp = () => {
         <AnimatePage>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="items-center flex flex-col w-full"
+            className="flex flex-col items-center w-full max-w-md mx-auto px-6 pt-4 pb-2 rounded-lg"
           >
-            <h3 className="text-center mt-5 font-semibold text-lg">
-              Enter Details to Create Free Account
+            <h3 className="text-2xl font-semibold text-gray-800 dark:text-slate-100 mb-6 text-center">
+              Create Your Free Account
             </h3>
-            <div id="name-input" className="flex flex-col my-2 w-[70%]">
-              <label htmlFor="name">Name</label>
+
+            <div className="w-full mb-4">
+              <label
+                htmlFor="name"
+                className="block text-gray-700 text-sm font-medium mb-2"
+              >
+                Full Name
+              </label>
               <input
                 type="text"
                 id="name"
                 placeholder="John Doe"
-                className="p-2 rounded-[8px]"
+                autoComplete="name"
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("name", {
                   required: {
                     value: true,
@@ -51,16 +63,25 @@ const SignUp = () => {
                 })}
               />
               {errors.name && (
-                <p className="text-red-600 text-sm">{errors.name.message}</p>
+                <p className="text-red-600 text-xs mt-1">
+                  {errors.name.message}
+                </p>
               )}
             </div>
-            <div id="email-input" className="flex flex-col my-2 w-[70%]">
-              <label htmlFor="email">Email</label>
+
+            <div className="w-full mb-4">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 text-sm font-medium mb-2"
+              >
+                Email Address
+              </label>
               <input
-                type="text"
+                type="email"
                 id="email"
                 placeholder="abc@example.com"
-                className="p-2 rounded-[8px]"
+                autoComplete="email"
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("email", {
                   required: {
                     value: true,
@@ -73,16 +94,25 @@ const SignUp = () => {
                 })}
               />
               {errors.email && (
-                <p className="text-red-600 text-sm">{errors.email.message}</p>
+                <p className="text-red-600 text-xs mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
-            <div id="password-input" className="flex flex-col my-2 w-[70%]">
-              <label htmlFor="password">Password</label>
+
+            <div className="w-full mb-4">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-sm font-medium mb-2"
+              >
+                Password
+              </label>
               <input
                 type="password"
                 id="password"
+                autoComplete="new-password"
                 placeholder="********"
-                className="p-2 rounded-[8px]"
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("password", {
                   required: {
                     value: true,
@@ -96,21 +126,25 @@ const SignUp = () => {
                 })}
               />
               {errors.password && (
-                <p className="text-red-600 text-sm">
+                <p className="text-red-600 text-xs mt-1">
                   {errors.password.message}
                 </p>
               )}
             </div>
-            <div
-              id="confirm-password-input"
-              className="flex flex-col my-2 w-[70%]"
-            >
-              <label htmlFor="confirm-password">Confirm Password</label>
+
+            <div className="w-full mb-6">
+              <label
+                htmlFor="confirm-password"
+                className="block text-gray-700 text-sm font-medium mb-2"
+              >
+                Confirm Password
+              </label>
               <input
                 type="password"
                 id="confirm-password"
                 placeholder="********"
-                className="p-2 rounded-[8px]"
+                autoComplete="new-password"
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("confirmPassword", {
                   required: {
                     value: true,
@@ -123,7 +157,7 @@ const SignUp = () => {
                 })}
               />
               {errors.confirmPassword && (
-                <p className="text-red-600 text-sm">
+                <p className="text-red-600 text-xs mt-1">
                   {errors.confirmPassword.message}
                 </p>
               )}
@@ -131,19 +165,17 @@ const SignUp = () => {
 
             <button
               type="submit"
-              className="bg-slate-600 mt-4 mb-2 rounded-[8px] px-8 py-[0.4rem]"
+              className="w-full bg-slate-600 text-white rounded-lg px-6 py-3 shadow-md hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-colors duration-200"
             >
               Sign Up
             </button>
-            <p className="w-[90%] text-center my-2">
-              Do you have an account?
+
+            <p className="w-full text-center mt-4 text-slate-600">
+              Already have an account?
               <br />
-              <span>
-                Login here{" "}
-                <Link className="underline" to={"/Sign-in"}>
-                  Login
-                </Link>
-              </span>
+              <Link className="text-blue-600 hover:underline" to="/Sign-in">
+                Log In
+              </Link>
             </p>
           </form>
         </AnimatePage>
