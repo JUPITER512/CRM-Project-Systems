@@ -1,21 +1,46 @@
 import AnimatePage from "@components/AnimatePage";
 import {
   useRecoilStateLoadable,
-  useRecoilValue,
   useRecoilValueLoadable,
 } from "recoil";
-import { customerDataSelector } from "../../Store/CustomerData";
+import Axios from "@hooks/Axios";
+import { customerDataFamily } from "../../Store/CustomerData";
+import { useQuery } from "@tanstack/react-query";
 
 const Dashboard = () => {
-  const customerData = useRecoilValueLoadable(customerDataSelector);
+  const [customerData, setCustomerData] = useRecoilStateLoadable(customerDataFamily);
 
-  if (customerData.state === "loading") {
+  const { isLoading, isError } = useQuery({
+    queryKey: ['customer_data'],
+    queryFn: async () => {
+      const response = await Axios({
+        requestType: "get",
+        url: "/me_customer_info",
+      });
+      if (response.status === 200) {
+        const data = response.data.customer_data;
+        setCustomerData({
+          totalCustomers: Math.max(0, data.totalCustomers),
+          males: Math.max(0, data.males),
+          females: Math.max(0, data.females),
+          havePhone: Math.max(0, data.havePhone),
+          communicationPreferences: data.communicationPreferences || {},
+          activeCount: Math.max(0, data.activeCount),
+        });
+        return data;
+      }
+    },
+    enabled: customerData.contents.totalCustomers === 0,
+  });
+
+  if (customerData.state === "loading" || isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (customerData.state === "hasError") {
+  if (customerData.state === "hasError" || isError) {
     return <div>Error loading data...</div>;
   }
+
   const {
     totalCustomers,
     activeCount,
@@ -24,6 +49,10 @@ const Dashboard = () => {
     havePhone,
     communicationPreferences,
   } = customerData.contents;
+
+  // Ensure that calculated values are not less than 0
+  const inactiveCount = Math.max(0, totalCustomers - activeCount);
+  const noPhoneCount = Math.max(0, totalCustomers - havePhone);
 
   return (
     <AnimatePage>
@@ -34,10 +63,10 @@ const Dashboard = () => {
               Total Customers
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Total : {totalCustomers && parseInt(totalCustomers)}
+              Total : {Math.max(0, totalCustomers)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              Remove : {localStorage.getItem('removedCustomer')}
+              Remove : {localStorage.getItem('removedCustomer') || 0}
             </div>
           </div>
           <div className="bg-slate-500 dark:bg-slate-700 w-full md:w-1/3 lg:w-1/4 rounded-lg p-4">
@@ -45,10 +74,10 @@ const Dashboard = () => {
               Customer Status
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Active : {activeCount}
+              Active : {Math.max(0, activeCount)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              InActive : {totalCustomers && parseInt(totalCustomers) - parseInt(activeCount)}
+              Inactive : {inactiveCount}
             </div>
           </div>
           <div className="bg-slate-500 dark:bg-slate-700 w-full md:w-1/3 lg:w-1/4 rounded-lg p-4">
@@ -56,10 +85,10 @@ const Dashboard = () => {
               Gender
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Males : {males}
+              Males : {Math.max(0, males)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              Females : {females}
+              Females : {Math.max(0, females)}
             </div>
           </div>
           <div className="bg-slate-500 dark:bg-slate-700 w-full md:w-1/3 lg:w-1/4 rounded-lg p-4">
@@ -67,10 +96,10 @@ const Dashboard = () => {
               Count of customers with a phone number
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Yes : {totalCustomers && havePhone}
+              Yes : {Math.max(0, havePhone)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              No : {totalCustomers && totalCustomers - havePhone}
+              No : {noPhoneCount}
             </div>
           </div>
         </div>
@@ -89,7 +118,7 @@ const Dashboard = () => {
                     <div className="w-2/3 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="bg-blue-600 text-xs font-medium text-white text-center p-0.5 leading-none"
-                        style={{ width: `${(count / totalCustomers) * 100}%` }}
+                        style={{ width: `${(totalCustomers > 0 ? (count / totalCustomers) * 100 : 0)}%` }}
                       >
                         {count}
                       </div>

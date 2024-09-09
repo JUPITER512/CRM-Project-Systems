@@ -5,7 +5,7 @@ import { MdDeleteForever } from "react-icons/md";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
 import { tableDataState } from "../../Store/TableData";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { customerDataFamily } from "../../Store/CustomerData";
 import notify from "../../utils/ToasterFunction";
 
@@ -61,8 +61,8 @@ export const Columns = [
     cell: (info) => {
       const id = info.row.original._id;
       const setTableDataState = useSetRecoilState(tableDataState);
-      const [customerData, setCustomerData] =
-        useRecoilState(customerDataFamily);
+      const [customerdata,setCustomerData] = useRecoilState(customerDataFamily);
+      
       async function handleDelete(id) {
         try {
           const response = await Axios({
@@ -74,7 +74,6 @@ export const Columns = [
             const currentCount = parseInt(removedCustomer) || 0;
             const newCount = currentCount + 1;
             localStorage.setItem("removedCustomer", newCount);
-
             setCustomerData(prevData => ({
               ...prevData,
               totalCustomers: prevData.totalCustomers - 1,

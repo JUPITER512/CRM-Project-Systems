@@ -40,6 +40,7 @@ const Table = () => {
     onGlobalFilterChange: setFilter,
     rowCount:data?.totalCustomers,
     onPaginationChange: setPagination,
+    autoResetPageIndex:false
   });
   if(isLoading){
     return <div>Loading.....</div>
