@@ -4,6 +4,7 @@ import { generateOTP } from "../Utils/GenerateOtp.js";
 import { sendmail } from "../Utils/NodeMailer.js";
 import Cloudinary_Upload from "../Utils/Cloudinary.js";
 import fs from 'fs';
+import { Customer } from "../Models/CustomerBasicInfo.model.js";
 
 export const EmailVerification=async(req,res)=>{
   try {
@@ -111,13 +112,17 @@ export const Sign_in = async (req, res) => {
       });
     }
     const checkPassword =await userInDb.isPasswordCorrect(password);
-    console.log(checkPassword)
     if (!checkPassword) {
       return res.status(401).json({
         message: "Invalid Credentials",
       });
     }
     const accessToken = userInDb.generateAccessToken();
+    if(!userInDb.refreshToken){
+      const refreshToken=userInDb.generateRefershToken();
+      userInDb.refreshToken = refreshToken;
+      await userInDb.save()
+    }
     const options = {
       httpOnly: true,
       secure: true,
@@ -130,7 +135,6 @@ export const Sign_in = async (req, res) => {
         accessToken:accessToken
       });
   } catch (error) {
-    console.log("Error in signin ",error)
     res.status(500).json({
       message: "Interval Server Error",
       error: error.message,
@@ -278,7 +282,6 @@ export const Change_Password = async (req, res) => {
 export const Update_Info = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log(userId)
     if (!userId) {
       return res.status(400).json({ message: "Email Not Verified" });
     }
@@ -313,22 +316,23 @@ export const Update_Info = async (req, res) => {
 
 export const Logout = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
+
     const findedUser = await User.findById(userId);
     if (!findedUser) {
-      return res.status(400).json({ message: "User Not Found Against Id" });
+      return res.status(404).json({ message: "User not found" });
     }
-    findedUser.refreshToken = null;
+    findedUser.refreshToken = undefined;
     await findedUser.save();
     res
       .status(200)
-      .clearCookie("accessToken")
-      .clearCookie("refreshToken")
+      .clearCookie("accessToken", { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
+      .clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
       .json({
-        message: "Account Logged Out Successfully",
+        message: "Account logged out successfully",
       });
   } catch (error) {
     res.status(500).json({
@@ -357,7 +361,6 @@ export const Refresh_Token = async (req, res) => {
         }
         const userId = decoded._id;
         const user = await User.findById(userId);
-        console.log({refreshToken,user:user.refreshToken})
         if (!user || user.refreshToken !== refreshToken) {
           return res.status(403).json({
             message: "User not found or Refresh Token does not match",
@@ -439,14 +442,112 @@ export const User_Information=async(req,res)=>{
         message:"User not found"
       })
     }
+   
     return res.status(200).json({
       message:"Success",
-      data:userInDb.toJsonobj()
+      data:userInDb.toJsonobj(),
     })
   } catch (error) {
     return res.status(500).json({
       message:"Internal Server Error",
       error:error.message
     })
+  }
+}
+export const User_Customer_Information=async(req,res)=>{
+  try {
+    const userId=req.user._id;
+    if(!userId){
+      return res.status(400).json({
+        message:"User Id not given"
+      })
+    }
+    const userInDb=await User.findById(userId);
+    if(!userInDb){
+      return res.status(400).json({
+        message:"User not found"
+      })
+    }
+    const customerData=await Customer.find({
+      addedBy:userId
+    })
+    let activeCount=null;
+    let males=null;
+    let females=null;
+    let havePhone=null;
+    const communicationPreferences={}
+    const totalCustomers=customerData.length; 
+    customerData.forEach((item)=>{
+      if(item?.gender?.toLowerCase()=='male'){
+        males+=1;
+      }else if(item?.gender?.toLowerCase()=='female'){
+        females+=1
+      }
+      if(item.customerStatus.toLowerCase()=='active'){
+        activeCount+=1;
+      }
+      if(item.primaryPhone){
+        havePhone+=1
+      }
+      if (item?.customerCommunicationPreference) {
+        const preference = item.customerCommunicationPreference.toLowerCase().trim();
+        if (communicationPreferences[preference]) {
+            communicationPreferences[preference] += 1;
+        } else {
+            communicationPreferences[preference] = 1;
+        }
+    }
+    })
+
+    return res.status(200).json({
+      message:"Success",
+      customer_data:{totalCustomers,activeCount,males,females,havePhone,communicationPreferences},
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message:"Internal Server Error",
+      error:error.message
+    })
+  }
+}
+
+export const Change_Password_FromProfile=async(req,res)=>{
+  try {
+    const userId=req.user._id
+    const {currentPassword,newPassword,confirmNewPassword}=req.body;
+    if(!currentPassword || !newPassword || !confirmNewPassword){
+      return res.status(400).json({
+        message:"Fill all fields"
+      })
+    }
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({
+        message: "New password and confirmation do not match"
+      });
+    }
+    const userInDb = await User.findById(userId);
+    if (!userInDb) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+    const currentPasswordStatus=await userInDb.isPasswordCorrect(currentPassword);
+    console.log(currentPasswordStatus)
+    if (!currentPasswordStatus) {
+      return res.status(400).json({
+        message: "Current password is incorrect"
+      });
+    }
+    userInDb.password = newPassword;
+    await userInDb.save();
+    res.status(200).json({
+      message: "Password updated successfully"
+    });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
   }
 }

@@ -1,7 +1,10 @@
 import AnimatePage from "@components/AnimatePage";
+import Axios from "@hooks/Axios";
 import { useForm } from "react-hook-form";
-
+import { useNavigate } from "react-router-dom";
+import notify from '../../utils/ToasterFunction'
 const Changepassword = () => {
+  const navigate=useNavigate()
   const form = useForm({
     defaultValues: {
       currentPassword: "",
@@ -9,12 +12,39 @@ const Changepassword = () => {
       confirmNewPassword: "",
     },
   });
-  const { register, handleSubmit, reset, formState } = form;
+  const { register, handleSubmit, reset, formState, } = form;
   const { errors } = formState;
 
   const handleChangePassword = async (data) => {
-    console.log(data);
-    reset();
+   try {
+    console.log(data)
+      const response=await Axios({
+        requestType:'post',
+        url:'/change-password-fromProfile',
+        data:data
+      })
+      if(response.status==200){
+        notify({
+          message:"Password Change Login Again",
+          position:'top-right',
+          autocloseTime:3000,
+          type:"success",
+          theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+        })
+        setTimeout(() => {
+          localStorage.clear()
+          navigate('/Sign-in',{replace:true})
+        }, 5000);
+      }
+   } catch (error) {
+    notify({
+      message:`Error While Changing Password ${error.message}`,
+      position:'top-right',
+      autocloseTime:3000,
+      type:"error",
+      theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+    })
+   }
   };
 
   return (

@@ -2,6 +2,8 @@ import AnimatePage from "@components/AnimatePage";
 import PictureUpload from "./PictureUpload";
 import { useForm } from "react-hook-form";
 import Axios from "@hooks/Axios";
+import notify from "../../utils/ToasterFunction";
+
 const ProfileSettings = () => {
   const form = useForm({
     defaultValues: {
@@ -31,13 +33,28 @@ const ProfileSettings = () => {
       })
       if(response.status==200){
         const updatedData = response.data.data;
+        Object.assign(localStorage,updatedData)
         setValue('name', updatedData.name);
         setValue('contact', updatedData.contact);
         setValue('address', updatedData.address);
         setValue('companyName', updatedData.companyName);
+        notify({
+          message:"Profile Information Update Successully",
+          position:'top-right',
+          autocloseTime:3000,
+          type:"success",
+          theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+        })
       }
     } catch (error) {
       console.log(error)
+      notify({
+        message:`Error While Upating info ${error.message}`,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
     }
   };
   return (

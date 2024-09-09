@@ -1,15 +1,9 @@
 import { IoIosAddCircle } from "react-icons/io";
 
-const CustomerForm = ({path,handleSubmit,onSubmit,errors,isViewModelOnly,register,today}) => {
+const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOnly}) => {
   return (
     <div className="w-full min-h-screen bg-gray-200 dark:bg-gray-900 p-4 md:p-6 lg:p-8 rounded-lg">
-      {path.split("/")[3] && (
-        <h1 className="text-center font-bold text-2xl py-1">
-          {path.split("/")[3]?.includes("View")
-            ? "View Customer  Data"
-            : "Update Cusotmer Information"}
-        </h1>
-      )}
+      
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 lg:p-8 relative"
@@ -448,7 +442,7 @@ const CustomerForm = ({path,handleSubmit,onSubmit,errors,isViewModelOnly,registe
           >
             <p className="flex items-center justify-center gap-2">
               {" "}
-              Add <IoIosAddCircle className="text-xl" />
+              Update <IoIosAddCircle className="text-xl" />
             </p>
           </button>
         )}

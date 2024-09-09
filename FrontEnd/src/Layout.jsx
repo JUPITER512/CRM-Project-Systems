@@ -12,7 +12,9 @@ import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
-import { useQuery } from "@tanstack/react-query";
+import { customerDataFamily } from "./Store/CustomerData";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import { useRecoilState, useSetRecoilState } from "recoil";
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
   { page: "CustomerList", id: 2, icon: <CiCircleList /> },
@@ -46,6 +48,8 @@ const Layout = () => {
     },
     staleTime:60000
   })
+ 
+
   function handleSidebar() {
     setSidebar(!sidebar);
     if (userMenu) {

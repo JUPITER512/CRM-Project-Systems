@@ -46,7 +46,6 @@ export const Get_Customer = async (req, res) => {
   try {
     const page=parseInt(req.query.page) || 1;
     const limit=parseInt(req.query.limit) || 10;
-    const from=parseInt(req.query.from) || 0;
     const skip = (page - 1) * limit;
     const customers = await Customer.find({
       addedBy:req.user._id
@@ -97,12 +96,18 @@ export const Remove_customer = async (req, res) => {
   try {
 
     if (!req.user._id) {
-      return res.status(400).json({ message: "User ID is required" });
+      return res.status(400).json(
+        { message: "User ID is required" }
+        );
     }
-    const find_customer = await Customer.findOne({ addedBy: req.user._id });
+    const find_customer = await Customer.findOne(
+      { addedBy: req.user._id }
+      );
 
     if (!find_customer) {
-      return res.status(404).json({ message: "Customer not found" });
+      return res.status(404).json(
+        { message: "Customer not found" }
+        );
     }
     await Customer.deleteOne({ _id: find_customer._id });
     res.status(200).json({ message: `Customer with Email ${find_customer.email} deleted` });
@@ -130,18 +135,47 @@ export const Update_customer_info = async (req, res) => {
       return res.status(400).json({ message: "New data is required" });
     }
 
-    let finded_customer = await Customer.findByIdAndUpdate(id,newData,{new:true,runValidators});
-    if (!finded_customer) {
+    const {
+      Additional,
+      address,
+      basic,
+      communicationStatus,
+      company
+    } = newData;
+
+    const updatedData = {
+      fullName: basic?.Name || null,
+      email: basic?.email || null,
+      gender: basic?.gender || null,
+      primaryPhone: basic?.primaryPhone || null,
+      alternativePhone: basic?.alternativePhone || null,
+      dob: basic?.dob ? new Date(basic?.dob) : null,
+      address: address || null,
+      customerCommunicationPreference: communicationStatus?.CommunicationPreferences || null,
+      customerStatus: communicationStatus?.status || null,
+      customerCompanyName: company?.JobTitle || null,
+      customerJobTitle: company?.name || null,
+      additionalInfoNote: Additional?.Notes || null,
+      additionalInfoSourceOfLead: Additional?.SourceofLead || null
+    };
+
+    // Update the customer in the database
+    const updatedCustomer = await Customer.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+
+    if (!updatedCustomer) {
       return res.status(404).json({ message: "Customer not found" });
     }
+
     res.status(200).json({
       message: "Customer updated successfully",
+      data: updatedCustomer
     });
 
   } catch (error) {
+    console.error('Error updating customer:', error);
     res.status(500).json({
       message: "Internal server error",
       error: error.message,
     });
   }
-}
+};

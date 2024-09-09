@@ -7,52 +7,26 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { Columns } from "./Columns";
-import { useEffect, useMemo, useState } from "react";
+import {useMemo, useState,useEffect } from "react";
 import PaginationButtons from "./PaginationButtons";
 import FilterInput from "./FilterInput";
-import { useQuery ,keepPreviousData} from "@tanstack/react-query";
-import Axios from "@hooks/Axios";
-import { useRecoilState } from "recoil";
-import { TableData } from "../../Store/TableData";
+
+import Query from './FetchtableData'
+import { tableDataState, paginationState} from "../../Store/TableData";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 const Table = () => {
+  const{data,isLoading,isError,error} =Query()
+  const tabledata=useRecoilValue(tableDataState);
+  const [pagination,setPagination]=useRecoilState(paginationState)
   const memoizedColumns = useMemo(() => Columns, []);
-  const  [value,setValue] = useRecoilState(TableData);
+
   const [sorting, setSorting] = useState([]);
   const [filter, setFilter] = useState("");
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
-  const paginationValues = useMemo(
-    () => ({
-      pageIndex: pagination.pageIndex,
-      pageSize: pagination.pageSize,
-    }),
-    [pagination.pageIndex, pagination.pageSize]
-  );
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["tabledata", pagination.pageIndex + 1,pagination.pageSize],
-    queryFn: async () => {
-      const response = await Axios({
-        requestType: "get",
-        url: `/get-customer?page=${paginationValues.pageIndex + 1}&limit=${paginationValues.pageSize}`,
-      });
-      if (response.status === 200) {
-        setValue((prev) => {
-          return [...prev, ...response.data.data];
-        });
-        return response.data;
-      }
-    },
-    staleTime: 30000,
-    keepPreviousData:true,
-    placeholderData:keepPreviousData,
-  });
 
   const tableInstance = useReactTable({
     columns: memoizedColumns,
-    data: value.length==0 || [],
+    data: tabledata || [],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -64,15 +38,14 @@ const Table = () => {
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFilter,
+    rowCount:data?.totalCustomers,
     onPaginationChange: setPagination,
-    rowCount:data?.totalCustomers
   });
-  if (isLoading) {
-    return <div>Loading.....</div>;
+  if(isLoading){
+    return <div>Loading.....</div>
   }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
+  if(isError){
+    return <div>Error {error.message}</div>
   }
   return (
     <>

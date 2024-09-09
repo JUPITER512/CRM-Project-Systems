@@ -13,6 +13,11 @@ import NotFound from "@pages/NotFoundPage/NotFound";
 import Changepassword from "@pages/ChangePassword/Changepassword";
 import AuthContextProvider from "@context/Auth";
 import ProtectedRoute from "@hooks/ProtectedRoute";
+import UpdateView from "@components/Table/Updateview";
+import 'react-toastify/dist/ReactToastify.css';
+
+import { ToastContainer} from 'react-toastify';
+
 const router = createBrowserRouter([
   {
     path: "/Sign-in",
@@ -64,11 +69,11 @@ const router = createBrowserRouter([
       },
       {
         path: "Customer/View-Customer-Info/:id",
-        element: <Adduser />,
+        element: <UpdateView />,
       },
       {
         path: "Customer/Update-Customer-Info/:id",
-        element: <Adduser />,
+        element: <UpdateView />,
       },
     ],
   },
@@ -81,6 +86,8 @@ export default function App() {
   return (
     <AuthContextProvider>
       <RouterProvider router={router} />
+      <ToastContainer />
+
     </AuthContextProvider>
   );
 }

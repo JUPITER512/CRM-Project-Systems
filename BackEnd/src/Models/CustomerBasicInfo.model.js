@@ -63,8 +63,16 @@ const customerSchema = new mongoose.Schema({
         required: true
     },
     additionalInfoNote: { type: String, trim: true },
-    additionalInfoSourceOfLead: { type: String }
+    additionalInfoSourceOfLead: { type: String },
+
 }, { timestamps: true });
 
+
+customerSchema.methods.totalCount = async function() {
+    return await this.countDocuments();
+};
+customerSchema.methods.countByStatus = async function () {
+    return this.customerStatus
+};
 
 export  const Customer=mongoose.model("Customer",customerSchema);
