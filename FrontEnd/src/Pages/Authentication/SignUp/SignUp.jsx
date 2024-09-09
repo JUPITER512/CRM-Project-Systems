@@ -13,7 +13,7 @@ const SignUp = () => {
     try {
       const response = await Axios({
         requestType: "post",
-        url: "/api/sign-up",
+        url: "/sign-up",
         data: data,
       });
       if (response.status == 200) {

@@ -12,6 +12,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
+import { useQuery } from "@tanstack/react-query";
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
   { page: "CustomerList", id: 2, icon: <CiCircleList /> },
@@ -25,7 +26,26 @@ const Layout = () => {
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
   const { isAuthenticated,setIsAuthenticated } = useAuthContext();
-
+  const{data,isLoading,isError,error} =useQuery({
+    queryKey:["User Info Api"],
+    queryFn:async()=>{
+      const response =await Axios({
+        requestType:"get",
+        url:"/me"
+      })
+      if(response.status==200){
+        for(let [key,value] of Object.entries(response.data.data)){
+          if(key=='data' && typeof value === 'object'){
+              Object.assign(localStorage,value)
+            }else{
+              localStorage.setItem(key,value)
+            }
+        }
+        return response.data.data
+      }
+    },
+    staleTime:60000
+  })
   function handleSidebar() {
     setSidebar(!sidebar);
     if (userMenu) {
@@ -76,7 +96,7 @@ const Layout = () => {
           <ThemeSwitcher />
          <ButtonAnimation>
          <img
-            src=""
+            src={ localStorage.getItem("picture") ||'/avatar.jpg'}
             alt="avatar-logo"
             className="cursor-pointer w-10 h-10 rounded-full border border-gray-300 dark:border-gray-700"
             onClick={() => {

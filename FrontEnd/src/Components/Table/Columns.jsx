@@ -9,7 +9,7 @@ import { useSetRecoilState } from "recoil";
 export const Columns = [
   {
     header: "ID⬆️⬇️",
-    accessorKey: "id",
+    accessorKey: "_id",
     cell: (info) => <p className=" text-center">{info.getValue()}</p>,
   },
   {
@@ -37,7 +37,7 @@ export const Columns = [
     accessorKey: "customerStatus",
     cell: (info) => (
       <>
-        {info.getValue().toLowerCase()=='active' ? (
+        {info.getValue()?.toLowerCase()=='active' ? (
           <p className="bg-green-400 border border-green-500 text-gray-800 text-center p-1 rounded-lg font-semibold">
             Active
           </p>

@@ -39,7 +39,9 @@ const Table = () => {
         url: `/get-customer?page=${paginationValues.pageIndex + 1}&limit=${paginationValues.pageSize}`,
       });
       if (response.status === 200) {
-        
+        setValue((prev) => {
+          return [...prev, ...response.data.data];
+        });
         return response.data;
       }
     },
@@ -50,7 +52,7 @@ const Table = () => {
 
   const tableInstance = useReactTable({
     columns: memoizedColumns,
-    data: value.length==0?data?.data:value || [],
+    data: value.length==0 || [],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -72,7 +74,6 @@ const Table = () => {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(value)
   return (
     <>
       <div className="overflow-x-auto bg-gray-100 dark:bg-gray-900 p-6 rounded-lg shadow-lg">

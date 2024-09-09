@@ -5,14 +5,14 @@ import Axios from "@hooks/Axios";
 const ProfileSettings = () => {
   const form = useForm({
     defaultValues: {
-      name: "Your name",
-      email: "Your email",
-      contact: "Your Contect",
-      address: "Your Address",
-      companyName: "Your Comapny",
+      name: localStorage.getItem("name"),
+      email: localStorage.getItem("email"),
+      contact: localStorage.getItem("contact"),
+      address: localStorage.getItem("address"),
+      companyName: localStorage.getItem("companyName"),
     },
   });
-  const { register, handleSubmit, formState ,reset,setValue} = form;
+  const { register, handleSubmit, formState,setValue} = form;
   const { errors } = formState;
   const isFormEdited = formState.isDirty;
 

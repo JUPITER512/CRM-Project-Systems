@@ -1,7 +1,8 @@
 import Axios from "@hooks/Axios";
-import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { userImageAtom } from "../../Store/UserImage";
 const PictureUpload = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useRecoilState(userImageAtom)
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -14,8 +15,8 @@ const PictureUpload = () => {
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      if(res.status==200){
-        console.log(res)
+      if (res.status === 200) {
+          localStorage.setItem('picture', URL.createObjectURL(selectedFile));
       }
     } else {
       console.log('No file selected');
@@ -23,13 +24,17 @@ const PictureUpload = () => {
   }
 
   function handleFileChange(e) {
-    setSelectedFile(e.target.files[0])
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      localStorage.setItem('picture', URL.createObjectURL(file));
+    }
   }
 
   return (
     <div className="w-full max-w-md relative bg-gray-100 border border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center dark:bg-slate-400 dark:border-gray-600">
     <img
-      src={selectedFile ? URL.createObjectURL(selectedFile) : ""}
+      src={selectedFile ? URL.createObjectURL(selectedFile) : localStorage.getItem("picture")?localStorage.getItem('picture') : '/avatar.jpg' }
       alt="user-image"
       className="rounded-full h-24 w-24 bg-cover mb-4 border-2"
     />

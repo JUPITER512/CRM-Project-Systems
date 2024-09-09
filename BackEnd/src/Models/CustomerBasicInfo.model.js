@@ -66,37 +66,5 @@ const customerSchema = new mongoose.Schema({
     additionalInfoSourceOfLead: { type: String }
 }, { timestamps: true });
 
-const sequenceSchema = new mongoose.Schema({
-    model: { type: String, required: true, unique: true },
-    sequence_value: { type: Number, default: 0 }
-});
 
-const Sequence = mongoose.model('Sequence', sequenceSchema);
-customerSchema.pre('save', async function (next) {
-    if (this.isNew) {
-        try {
-            const sequence = await Sequence.findOneAndUpdate(
-                { model: 'Customer' },
-                { $inc: { sequence_value: 1 } },
-                { new: true, upsert: true }
-            );
-            this.id = sequence.sequence_value;
-        } catch (error) {
-            return next(error);
-        }
-    }
-    next();
-});
-
-customerSchema.post('deleteOne', async function (doc, next) {
-  try {
-    await Sequence.findOneAndUpdate(
-      { model: 'Customer' },
-      { $inc: { sequence_value: -1 } }
-    );
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
 export  const Customer=mongoose.model("Customer",customerSchema);

@@ -127,7 +127,6 @@ export const Sign_in = async (req, res) => {
       .cookie("refreshToken", userInDb.refreshToken, options)
       .json({
         message: "Success",
-        data: userInDb.toJsonobj(),
         accessToken:accessToken
       });
   } catch (error) {
@@ -425,3 +424,29 @@ export const handleImage = async (req, res) => {
     }
   }
 };
+
+export const User_Information=async(req,res)=>{
+  try {
+    const userId=req.user._id;
+    if(!userId){
+      return res.status(400).json({
+        message:"User Id not given"
+      })
+    }
+    const userInDb=await User.findById(userId);
+    if(!userInDb){
+      return res.status(400).json({
+        message:"User not found"
+      })
+    }
+    return res.status(200).json({
+      message:"Success",
+      data:userInDb.toJsonobj()
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message:"Internal Server Error",
+      error:error.message
+    })
+  }
+}
