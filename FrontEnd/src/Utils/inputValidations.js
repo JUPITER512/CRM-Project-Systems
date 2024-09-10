@@ -11,7 +11,7 @@ const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,20}$/;
 const passwordSchema = yup.object().shape({
   password: yup
     .string()
-    .matches(passwordRegex, "Password must contain at least one letter, one number, and one special character")
+    .matches(passwordRegex, "Password must contain at least one letter, one number, and one special character And Must be of 8 Characters")
     .min(8, "Password must be at least 8 characters")
     .max(20, "Password must be at most 20 characters")
     .required("Password is required"),

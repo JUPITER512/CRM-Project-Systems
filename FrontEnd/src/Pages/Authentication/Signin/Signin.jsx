@@ -7,9 +7,12 @@ import { useAuthContext } from "@context/Auth";
 import { FaEyeSlash } from "react-icons/fa6";
 import { FaEye } from "react-icons/fa";
 import { useState } from "react";
-import { emailSchema,passwordSchema } from "../../../utils/inputValidations.js";
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import {
+  emailSchema,
+  passwordSchema,
+} from "../../../utils/inputValidations.js";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import notify from "../../../utils/ToasterFunction.js";
 
 const schema = yup.object().shape({
@@ -17,41 +20,49 @@ const schema = yup.object().shape({
   password: passwordSchema.fields.password,
 });
 const Signin = () => {
-
-  const [showPassWord,setShowPassword]=useState(false)
-  const form = useForm({resolver:yupResolver(schema)});
-  const navigate=useNavigate();
-  const { handleSubmit, register, formState,reset } = form;
+  const [loader, setLoader] = useState(false);
+  const [showPassWord, setShowPassword] = useState(false);
+  const form = useForm({ resolver: yupResolver(schema) });
+  const navigate = useNavigate();
+  const { handleSubmit, register, formState } = form;
   const { errors } = formState;
-  const authContext=useAuthContext()
+  const authContext = useAuthContext();
 
   async function onSubmit(data) {
     try {
-     
-      const response=await Axios({requestType:"post",data:data,url:"/sign-in"})
-      localStorage.setItem('enteredEmail',data.email)
-      if(response.status==200){
-        localStorage.removeItem('enteredEmail')
-        const userdataObject=response.data
-        for(let [key,value] of Object.entries(userdataObject)){
-          if(key=='data' && typeof value === 'object'){
-              Object.assign(localStorage,value)
-            }else{
-              localStorage.setItem(key,value)
-            }
+      setLoader(true);
+      const response = await Axios({
+        requestType: "post",
+        data: data,
+        url: "/sign-in",
+      });
+      localStorage.setItem("enteredEmail", data.email);
+      if (response.status == 200) {
+        localStorage.removeItem("enteredEmail");
+        const userdataObject = response.data;
+        for (let [key, value] of Object.entries(userdataObject)) {
+          if (key == "data" && typeof value === "object") {
+            Object.assign(localStorage, value);
+          } else {
+            localStorage.setItem(key, value);
+          }
         }
-        localStorage.setItem("enteredEmail",data.email)
-        authContext.setIsAuthenticated(true)
-        navigate('/Home/Dashboard',{replace:true})
+        localStorage.setItem("enteredEmail", data.email);
+        authContext.setIsAuthenticated(true);
+        setTimeout(() => {
+          navigate("/Home/Dashboard", { replace: true });
+        }, 700);
       }
     } catch (error) {
       notify({
-        message:error.response.data.message,
-        position:'top-right',
-        autocloseTime:3000,
-        type:"error",
-        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
-      })
+        message: error.response.data.message,
+        position: "top-right",
+        autocloseTime: 3000,
+        type: "error",
+        theme: `${localStorage.getItem("theme") == "false" ? "light" : "dark"}`,
+      });
+    } finally {
+      setLoader(false);
     }
   }
   return (
@@ -105,30 +116,34 @@ const Signin = () => {
                 Password
               </label>
               <div className="flex items-center justify-center relative">
-
-              <input
-                type={`${showPassWord?'text':'password'}`}
-                id="password"
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                className="w-full p-3 border text-black border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register("password", {
-                  required: {
-                    value: true,
-                    message: "Password is required",
-                  },
-                  pattern: {
-                    value: /^(?=[A-Za-z0-9]{8,}$)[A-Za-z0-9]+$/,
-                    message:
-                      "Password must be at least 8 characters and alphanumeric",
-                  },
-                })}
+                <input
+                  type={`${showPassWord ? "text" : "password"}`}
+                  id="password"
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                  className="w-full p-3 border text-black border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "Password is required",
+                    },
+                    pattern: {
+                      value: /^(?=[A-Za-z0-9]{8,}$)[A-Za-z0-9]+$/,
+                      message:
+                        "Password must be at least 8 characters and alphanumeric",
+                    },
+                  })}
                 />
-                  <button type="button" className="absolute right-2 text-black" onClick={()=>{setShowPassword(!showPassWord)}}>
-                        {showPassWord ? <FaEye  />:<FaEyeSlash/>}
-                  </button>
-                
-                </div>
+                <button
+                  type="button"
+                  className="absolute right-2 text-black"
+                  onClick={() => {
+                    setShowPassword(!showPassWord);
+                  }}
+                >
+                  {showPassWord ? <FaEye /> : <FaEyeSlash />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-red-600 text-xs mt-1">
                   {errors.password.message}
@@ -137,10 +152,11 @@ const Signin = () => {
             </div>
 
             <button
+              disabled={loader}
               type="submit"
               className="w-full bg-slate-600 text-white rounded-lg px-6 py-3 shadow-md hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-colors duration-200 ease-in-out"
             >
-              Log In
+              {loader ? "Loading..." : "Log In"}
             </button>
 
             <div className="w-full max-w-md text-center mt-4">

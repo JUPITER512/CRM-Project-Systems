@@ -1,6 +1,5 @@
   import AnimatePage from "@components/AnimatePage";
   import { useForm } from "react-hook-form";
-  import { useLocation, useParams } from "react-router-dom";
   import Axios from "@hooks/Axios";
   import CustomerForm from "./CustomerForm";
   import { tableDataState } from "../../Store/TableData";
@@ -65,6 +64,7 @@
   const { register, handleSubmit, formState, reset} = form;
   const { errors } = formState;
   const onSubmit = async (data) => {
+    console.log(data)
     try {
       const response = await Axios({
         requestType: "post",
@@ -96,7 +96,7 @@
           type:"success",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
-        reset()
+        // reset()
       } 
     } catch (err) {
       console.error("Error adding user:", err);

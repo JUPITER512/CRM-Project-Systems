@@ -2,7 +2,20 @@ import AnimatePage from "@components/AnimatePage";
 import Axios from "@hooks/Axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import notify from '../../utils/ToasterFunction'
+import notify from '../../utils/ToasterFunction';
+
+
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import { passwordSchema } from "../../utils/inputValidations.js";
+
+
+const schema=yup.object().shape({
+  currentPassword:passwordSchema.fields.password,
+  newPassword:passwordSchema.fields.password,
+  confirmNewPassword:passwordSchema.fields.password
+})
 const Changepassword = () => {
   const navigate=useNavigate()
   const form = useForm({
@@ -11,8 +24,9 @@ const Changepassword = () => {
       newPassword: "",
       confirmNewPassword: "",
     },
+    resolver:yupResolver(schema)
   });
-  const { register, handleSubmit, reset, formState, } = form;
+  const { register, handleSubmit, formState, reset} = form;
   const { errors } = formState;
 
   const handleChangePassword = async (data) => {
@@ -27,20 +41,22 @@ const Changepassword = () => {
         notify({
           message:"Password Change Login Again",
           position:'top-right',
-          autocloseTime:3000,
+          autocloseTime:2000,
           type:"success",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
+        reset()
         setTimeout(() => {
           localStorage.clear()
           navigate('/Sign-in',{replace:true})
-        }, 5000);
+        }, 2000);
+        
       }
    } catch (error) {
     notify({
-      message:`Error While Changing Password ${error.message}`,
+      message:`${error.response.data.message  }`,
       position:'top-right',
-      autocloseTime:3000,
+      autocloseTime:2000,
       type:"error",
       theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
     })
@@ -49,7 +65,7 @@ const Changepassword = () => {
 
   return (
     <AnimatePage>
-      <div className="flex flex-col gap-4 justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900 rounded-lg px-4">
+      <div className="flex flex-col gap-4 justify-center items-center min-h-screen bg-gray-300 dark:bg-gray-900 rounded-lg px-4">
         <h1 className="text-lg md:text-2xl font-bold  text-center">
           Hi User You Can Cange Your Password Here
         </h1>
@@ -99,13 +115,9 @@ const Changepassword = () => {
                 placeholder="New Password"
                 {...register("newPassword", {
                   required: "New Password is required",
-                  pattern: {
-                    value: /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                    message: "Password Should of length 8 and alphaNumeric",
-                  },
                 })}
                 className={` dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
-                  errors.newPassword ? "border-red-500" : "border-gray-300"
+                  errors.newpassword ? "border-red-500" : "border-gray-300"
                 } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
               />
               {errors.newPassword && (
@@ -128,10 +140,6 @@ const Changepassword = () => {
                 placeholder="Confirm New Password"
                 {...register("confirmNewPassword", {
                   required: "Confirm New Password is required",
-                  pattern: {
-                    value: /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                    message: "Password Should of length 8 and alphaNumeric",
-                  },
                 })}
                 className={` dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
                   errors.confirmNewPassword

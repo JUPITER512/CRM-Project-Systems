@@ -316,14 +316,32 @@ const CustomerForm = ({
                 >
                   Communication Preferences
                 </label>
-                <input
+                <select
                   disabled={isViewModelOnly}
-                  type="text"
                   id="CommunicationPreferences"
-                  placeholder="i.e. Email, Phone, SMS, etc"
+                  placeholder="Select Communication Preference"
                   className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-900 dark:text-gray-200"
-                  {...register("communicationStatus.CommunicationPreferences")}
-                />
+                  {...register("communicationStatus.CommunicationPreferences", {
+                    required: {
+                      value: true,
+                      message: "Communication Preference Required",
+                    },
+                    validate: (fieldValue) => {
+                      const validValues = ["email", "linkedin", "phone", "sms"];
+                      if (!validValues.includes(fieldValue.toLowerCase())) {
+                        return `Only ${validValues.join(", ")} Allowed`;
+                      }
+                    },
+                  })}
+                >
+                  <option value="" disabled>
+                    Select Communication Preference
+                  </option>
+                  <option value="email">Email</option>
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="phone">Phone</option>
+                  <option value="sms">SMS</option>
+                </select>
               </div>
               <div className="flex flex-col">
                 <label
