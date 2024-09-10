@@ -56,11 +56,9 @@ const customerSchema = new mongoose.Schema({
     },
     customerCompanyName: {
         type: String,
-        required: true
     },
     customerJobTitle: {
         type: String,
-        required: true
     },
     additionalInfoNote: { type: String, trim: true },
     additionalInfoSourceOfLead: { type: String },

@@ -27,7 +27,6 @@ const SignUp = () => {
   const { errors } = formState;
 
   async function onSubmit(data) {
-    let response;
     try {
       if (data.password !== data.confirmPassword) {
         setError("confirmPassword", {
@@ -36,7 +35,7 @@ const SignUp = () => {
         });
         return;
       }
-      response = await Axios({
+      const response = await Axios({
         requestType: "post",
         url: "/sign-up",
         data: data,
@@ -65,8 +64,14 @@ const SignUp = () => {
         reset();
       }
     } catch (error) {
+      notify({
+        message:error.response.data.message,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
       console.log(`Error while signin in`);
-      console.log(response)
     }
   }
 

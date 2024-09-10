@@ -13,6 +13,9 @@ import { FaEye } from "react-icons/fa";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { passwordSchema } from "../../../utils/inputValidations.js";
+import notify from "../../../utils/ToasterFunction.js";
+
+
 const schema=yup.object().shape({
   newpassword:passwordSchema.fields.password,
   confirmnewpassword:passwordSchema.fields.password
@@ -24,7 +27,7 @@ const NewPassword = () => {
   const form = useForm({
     resolver: yupResolver(schema)
   });
-  const { handleSubmit, register, formState,setError } = form;
+  const { handleSubmit, register, formState,setError ,reset} = form;
   const { errors, } = formState;
   const navigate = useNavigate();
 
@@ -49,10 +52,33 @@ const NewPassword = () => {
       });
       if (response.status == 200) {
         localStorage.clear();
-        navigate("/Sign-In", { replace: true });
+        reset()
+        notify({
+          message:"Password change Successfully",
+          position:'top-right',
+          autocloseTime:3000,
+          type:"success",
+          theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+        })
+        notify({
+          message:"You will redirect to Sign In Page shortly",
+          position:'top-right',
+          autocloseTime:3000,
+          type:"info",
+          theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+        })
+        setTimeout(() => {
+          navigate("/Sign-In", { replace: true });
+        }, 3300);
       }
     } catch (error) {
-      console.log(error.message);
+      notify({
+        message:error.response.data.message,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
     }
   }
   return (

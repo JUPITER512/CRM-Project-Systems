@@ -3,6 +3,13 @@ import PictureUpload from "./PictureUpload";
 import { useForm } from "react-hook-form";
 import Axios from "@hooks/Axios";
 import notify from "../../utils/ToasterFunction";
+import { phoneNumberSchema } from "../../utils/inputValidations.js";
+import * as yup from 'yup'
+import { yupResolver } from "@hookform/resolvers/yup";
+import { ToastContainer } from "react-toastify";
+const schema=yup.object().shape({
+  contact: phoneNumberSchema.fields.phoneNumber
+})
 
 const ProfileSettings = () => {
   const form = useForm({
@@ -13,6 +20,7 @@ const ProfileSettings = () => {
       address: localStorage.getItem("address"),
       companyName: localStorage.getItem("companyName"),
     },
+    resolver:yupResolver(schema)
   });
   const { register, handleSubmit, formState,setValue} = form;
   const { errors } = formState;
@@ -59,6 +67,8 @@ const ProfileSettings = () => {
   };
   return (
     <AnimatePage>
+            <ToastContainer />
+
       <div className="bg-gray-200 dark:bg-gray-900 rounded-2xl py-4 mt-2 px-4 sm:px-6 lg:px-8">
         <h2 className="text-center py-4 font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
           Profile Settings
@@ -99,7 +109,7 @@ const ProfileSettings = () => {
                 type="text"
                 id="email"
                 defaultValue="abc@example.com"
-                className="mt-1 p-2 cursor-not-allowed border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200 "
+                className="mt-1 p-2 cursor-not-allowed border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-600 dark:text-gray-200 "
               />
               {errors.email && (
                 <p className="text-red-600 text-sm">{errors.email?.message}</p>

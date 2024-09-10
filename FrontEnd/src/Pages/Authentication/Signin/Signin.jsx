@@ -10,6 +10,7 @@ import { useState } from "react";
 import { emailSchema,passwordSchema } from "../../../utils/inputValidations.js";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import notify from "../../../utils/ToasterFunction.js";
 
 const schema = yup.object().shape({
   email: emailSchema.fields.email,
@@ -44,7 +45,13 @@ const Signin = () => {
         navigate('/Home/Dashboard',{replace:true})
       }
     } catch (error) {
-      console.log(error.message)
+      notify({
+        message:error.response.data.message,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
     }
   }
   return (

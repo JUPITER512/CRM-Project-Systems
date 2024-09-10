@@ -1,9 +1,15 @@
 import { IoIosAddCircle } from "react-icons/io";
 
-const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOnly}) => {
+const CustomerForm = ({
+  handleSubmit,
+  onSubmit,
+  errors,
+  register,
+  today,
+  isViewModelOnly,
+}) => {
   return (
     <div className="w-full min-h-screen bg-gray-200 dark:bg-gray-900 p-4 md:p-6 lg:p-8 rounded-lg">
-      
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 lg:p-8 relative"
@@ -42,11 +48,12 @@ const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOn
               disabled={isViewModelOnly}
               id="gender"
               className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200"
-              {...register("basic.gender", 
-              //   {
-              //   required: "Gender is required",
-              // }
-            )}
+              {...register(
+                "basic.gender"
+                //   {
+                //   required: "Gender is required",
+                // }
+              )}
             >
               <option value="" disabled>
                 Select Gender
@@ -71,7 +78,7 @@ const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOn
               disabled={isViewModelOnly}
               type="date"
               id="Dob"
-              className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200"
+              className="custom-date-input p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 dark:text-gray-200"
               max={today}
               {...register("basic.dob", {
                 required: "Date of Birth is required",
@@ -127,7 +134,6 @@ const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOn
               className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200"
               {...register("basic.primaryPhone", {
                 required: "Primary Phone is required",
-                
               })}
             />
             {errors.basic?.primaryPhone && (
@@ -288,10 +294,6 @@ const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOn
                   className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-900 dark:text-gray-200"
                   {...register("address.zipCode", {
                     required: "Zip Code is required",
-                    pattern: {
-                      value: /^[0-9]{5}(-[0-9]{4})?$/,
-                      message: "Invalid Zip Code format",
-                    },
                   })}
                 />
                 {errors.address?.zipCode && (
@@ -330,24 +332,26 @@ const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOn
                 >
                   Status
                 </label>
-                <input
+                <select
                   disabled={isViewModelOnly}
-                  type="text"
                   id="Status"
-                  placeholder="Active, Inactive"
                   className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-900 dark:text-gray-200"
                   {...register("communicationStatus.status", {
                     validate: (fieldValue) => {
-                      const trimmedValue = fieldValue.trim().toLowerCase();
-                      if (
-                        trimmedValue !== "active" &&
-                        trimmedValue !== "inactive"
-                      ) {
+                      const validValues = ["active", "inactive"];
+                      if (!validValues.includes(fieldValue.toLowerCase())) {
                         return "Only Active or Inactive Allowed";
                       }
                     },
                   })}
-                />
+                >
+                  <option value="" disabled>
+                    Select status
+                  </option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+
                 {errors.communicationStatus?.status && (
                   <p className="text-red-600 text-sm dark:text-red-400">
                     {errors.communicationStatus.status.message}
@@ -442,7 +446,7 @@ const CustomerForm = ({handleSubmit,onSubmit,errors,register,today,isViewModelOn
           >
             <p className="flex items-center justify-center gap-2">
               {" "}
-              Update <IoIosAddCircle className="text-xl" />
+              ADD <IoIosAddCircle className="text-xl" />
             </p>
           </button>
         )}

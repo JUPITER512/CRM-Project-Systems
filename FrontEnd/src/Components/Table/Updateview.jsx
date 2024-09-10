@@ -7,17 +7,27 @@ import { useRecoilState } from "recoil";
 import CustomerForm from "../../Pages/AddUser/CustomerForm";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 
 const today = new Date().toISOString().split("T")[0];
-
+const formatDateForInput = (dateString) => {
+  if (!dateString) {
+    return "";
+  }
+  const d = new Date(dateString);
+  return d.toISOString().split("T")[0];
+};
 const UpdateView = () => {
   const [tabledata, setTableState] = useRecoilState(tableDataState);
   const { id } = useParams();
   const path = useLocation().pathname.split("/")[3];
   const navigate = useNavigate();
 
-  // Try to find customer data in tabledata
-  const localData = tabledata.find((item) => item._id === id);
+  const localData = tabledata.find((item) => {
+    if (item._id === id) {
+      return item;
+    }
+  });
 
   const {
     data: customerData,
@@ -37,10 +47,10 @@ const UpdateView = () => {
         throw new Error("Failed to fetch customer data");
       }
     },
-    enabled: !localData, // Only fetch data if localData is not available
+    enabled: !localData,
+    staleTime:600000
   });
 
-  // Use localData if available, otherwise use customerData from the query
   const formData = localData || customerData;
 
   const form = useForm({
@@ -49,7 +59,7 @@ const UpdateView = () => {
         Name: formData?.fullName || "",
         email: formData?.email || "",
         gender: formData?.gender || "",
-        dob: "",
+        dob: formatDateForInput(formData?.dob) || "",
         primaryPhone: formData?.primaryPhone || "",
         alternativePhone: formData?.alternativePhone || "",
       },
@@ -62,7 +72,8 @@ const UpdateView = () => {
         zipCode: formData?.address?.zipCode || "",
       },
       communicationStatus: {
-        CommunicationPreferences: formData?.customerCommunicationPreference || "",
+        CommunicationPreferences:
+          formData?.customerCommunicationPreference || "",
         status: formData?.customerStatus || "",
       },
       company: {
@@ -75,7 +86,7 @@ const UpdateView = () => {
       },
     },
   });
-
+  console.log(new Date(formData?.dob));
   const { register, handleSubmit, formState, reset } = form;
   const { errors } = formState;
 
@@ -92,17 +103,28 @@ const UpdateView = () => {
             item._id === id ? { ...response.data.data } : item
           )
         );
-        navigate('/home/CustomerList');
-      } else {
-        console.error("Failed to update customer:", response.status);
+        notify({
+          message:"Customer Information Update Successully",
+          position:'top-right',
+          autocloseTime:3000,
+          type:"success",
+          theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+        })
+        navigate("/home/CustomerList");
       }
     } catch (error) {
+      notify({
+        message:`Error While Upating info ${error.message}`,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
       console.error("Error updating customer:", error);
     }
   };
 
   const isViewModelOnly = path.includes("View");
-
   useEffect(() => {
     if (customerData) {
       reset({
@@ -110,7 +132,7 @@ const UpdateView = () => {
           Name: customerData.fullName || "",
           email: customerData.email || "",
           gender: customerData.gender || "",
-          dob: "",
+          dob: formatDateForInput(formData?.dob) || "",
           primaryPhone: customerData.primaryPhone || "",
           alternativePhone: customerData.alternativePhone || "",
         },
@@ -123,7 +145,8 @@ const UpdateView = () => {
           zipCode: customerData.address?.zipCode || "",
         },
         communicationStatus: {
-          CommunicationPreferences: customerData.customerCommunicationPreference || "",
+          CommunicationPreferences:
+            customerData.customerCommunicationPreference || "",
           status: customerData.customerStatus || "",
         },
         company: {
@@ -140,9 +163,12 @@ const UpdateView = () => {
 
   return (
     <AnimatePage>
+      <ToastContainer/>
       {path && (
         <h1 className="text-center font-bold text-2xl py-1">
-          {isViewModelOnly ? "View Customer Data" : "Update Customer Information"}
+          {isViewModelOnly
+            ? "View Customer Data"
+            : "Update Customer Information"}
         </h1>
       )}
       {isLoading && <p>Loading...</p>}

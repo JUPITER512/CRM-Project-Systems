@@ -13,6 +13,13 @@ import { Customer } from "../Models/CustomerBasicInfo.model.js";
         return res.status(400).json({ message: "User not authenticated" });
       }
       const manager_id = req.user._id;
+      const existingCustomer = await Customer.findOne({ email: basic?.email });
+      if (existingCustomer) {
+        return res.status(400).json({
+          message: "Customer with this email already exists",
+        });
+      }
+  
       const newCustomerAddition = await Customer.create({
         addedBy:manager_id || null,
         fullName:basic?.Name || null,

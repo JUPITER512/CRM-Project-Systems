@@ -7,6 +7,7 @@ import Axios from "@hooks/Axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { emailSchema } from "../../../utils/inputValidations.js";
+import notify from "../../../utils/ToasterFunction.js";
 
 const schema=yup.object().shape({
   forgetpasswordemail:emailSchema.fields.email
@@ -24,6 +25,13 @@ const ForgetPassword = () => {
         navigate('/Otp-Code',{replace:true})
       }
     } catch (error) {
+      notify({
+        message:error.response.data.message,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
       console.log(error.message)
     }
   }

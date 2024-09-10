@@ -17,7 +17,7 @@ const tableData = {
 const Userlist = () => {
   return (
     <AnimatePage>
-      <div className=" w-full bg-white dark:bg-slate-900">
+      <div className=" w-full bg-white dark:bg-slate-900 rounded-xl px-4 py-4">
         <Table/>
         <div className="p-4 flex justify-end">
       </div>
