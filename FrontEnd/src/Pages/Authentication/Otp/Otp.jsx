@@ -3,8 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
 import AnimatePage from "@components/AnimatePage";
 import Axios from "@hooks/Axios";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import { otpCode } from "../../../utils/inputValidations.js";
+const schema=yup.object().shape({
+  otpcode:otpCode.fields.otp
+})
 const Otp = () => {
-  const form = useForm();
+  const form = useForm({resolver:yupResolver(schema)});
   const { handleSubmit, register, formState } = form;
   const { errors } = formState;
   const navigate = useNavigate();
@@ -12,7 +18,7 @@ const Otp = () => {
     try {
       const response = await Axios({
         requestType: "post",
-        url: "/api/verify-otp",
+        url: "/verify-otp",
         data: {
           otp: data.otpcode,
           email: localStorage.getItem("forgetPasswordEmail"),
@@ -52,7 +58,7 @@ const Otp = () => {
                 id="code"
                 maxLength={6}
                 placeholder="123456"
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 text-black border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("otpcode", {
                   required: {
                     value: true,
@@ -78,7 +84,7 @@ const Otp = () => {
               Submit
             </button>
 
-            <p className="w-full text-center mt-4 text-gray-600">
+            <p className="w-full text-center mt-4 text-gray-600 dark:text-gray-300">
               Remember your password?
               <br />
               <Link className="text-blue-600 hover:underline" to="/Sign-in">

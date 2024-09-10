@@ -95,6 +95,7 @@ const Changepassword = () => {
               <input
                 id="newPassword"
                 type="password"
+                autoComplete="new-password"
                 placeholder="New Password"
                 {...register("newPassword", {
                   required: "New Password is required",
@@ -123,6 +124,7 @@ const Changepassword = () => {
               <input
                 id="confirmNewPassword"
                 type="password"
+                autoComplete="new-password"
                 placeholder="Confirm New Password"
                 {...register("confirmNewPassword", {
                   required: "Confirm New Password is required",

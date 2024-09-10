@@ -1,20 +1,45 @@
 import AnimatePage from "@components/AnimatePage";
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
 import Axios from "@hooks/Axios";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { FaEyeSlash } from "react-icons/fa6";
 
+import { FaEye } from "react-icons/fa";
+
+
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import { passwordSchema } from "../../../utils/inputValidations.js";
+const schema=yup.object().shape({
+  newpassword:passwordSchema.fields.password,
+  confirmnewpassword:passwordSchema.fields.password
+})
 const NewPassword = () => {
-  const form = useForm();
-  const { handleSubmit, register, formState } = form;
-  const { errors } = formState;
+  const [showPassWord, setShowPassword] = useState(false);
+  const [confirmPassword, setShowConfrimPassword] = useState(false);
+
+  const form = useForm({
+    resolver: yupResolver(schema)
+  });
+  const { handleSubmit, register, formState,setError } = form;
+  const { errors, } = formState;
   const navigate = useNavigate();
 
   async function onSubmit(data) {
     try {
+      if (data.newpassword !== data.confirmnewpassword) {
+        setError("confirmnewpassword", {
+          type: "manual",
+          message: "Passwords do not match"
+        });
+        return;
+      }
       const response = await Axios({
         requestType: "post",
-        url: "/api/change-password",
+        url: "/change-password",
         data: {
           email: localStorage.getItem("email"),
           id: localStorage.getItem("id"),
@@ -22,12 +47,12 @@ const NewPassword = () => {
           password: data.newpassword,
         },
       });
-      if (response.status==200){
+      if (response.status == 200) {
         localStorage.clear();
-        navigate('/Sign-In',{replace:true})
+        navigate("/Sign-In", { replace: true });
       }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
   }
   return (
@@ -48,23 +73,35 @@ const NewPassword = () => {
               <label htmlFor="newpassword" className="font-medium">
                 New Password
               </label>
-              <input
-                type="password"
-                id="newpassword"
-                placeholder="********"
-                className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                {...register("newpassword", {
-                  required: {
-                    value: true,
-                    message: "Password is required",
-                  },
-                  pattern: {
-                    value: /^(?=[A-Za-z0-9]{8,}$)[A-Za-z0-9]+$/,
-                    message:
-                      "Password must be at least 8 characters and alphanumeric",
-                  },
-                })}
-              />
+              <div className="flex items-center justify-center relative">
+                <input
+                  type={`${showPassWord ? "text" : "password"}`}
+                  id="newpassword"
+                  autoComplete="new-password"
+                  placeholder="********"
+                  className="w-full text-black p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("newpassword", {
+                    required: {
+                      value: true,
+                      message: "Password is required",
+                    },
+                    pattern: {
+                      value: /^(?=[A-Za-z0-9]{8,}$)[A-Za-z0-9]+$/,
+                      message:
+                        "Password must be at least 8 characters and alphanumeric",
+                    },
+                  })}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 text-black"
+                  onClick={() => {
+                    setShowPassword(!showPassWord);
+                  }}
+                >
+                  {showPassWord ? <FaEye /> : <FaEyeSlash />}
+                </button>
+              </div>
               {errors.newpassword && (
                 <p className="text-red-600 text-sm">
                   {errors.newpassword.message}
@@ -76,23 +113,35 @@ const NewPassword = () => {
               <label htmlFor="confirmnewpassword" className="font-medium">
                 Confirm Password
               </label>
-              <input
-                type="password"
-                id="confirmnewpassword"
-                placeholder="********"
-                className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                {...register("confirmnewpassword", {
-                  required: {
-                    value: true,
-                    message: "Confirm Password is required",
-                  },
-                  pattern: {
-                    value: /^(?=[A-Za-z0-9]{8,}$)[A-Za-z0-9]+$/,
-                    message:
-                      "Password must be at least 8 characters and alphanumeric",
-                  },
-                })}
-              />
+              <div className="flex items-center justify-center relative">
+                <input
+                  type={`${confirmPassword ? "text" : "password"}`}
+                  id="confirmnewpassword"
+                  placeholder="********"
+                  autoComplete="new-password"
+                  className="w-full text-black p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("confirmnewpassword", {
+                    required: {
+                      value: true,
+                      message: "Confirm Password is required",
+                    },
+                    pattern: {
+                      value: /^(?=[A-Za-z0-9]{8,}$)[A-Za-z0-9]+$/,
+                      message:
+                        "Password must be at least 8 characters and alphanumeric",
+                    },
+                  })}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 text-black"
+                  onClick={() => {
+                    setShowConfrimPassword(!confirmPassword);
+                  }}
+                >
+                  {confirmPassword ? <FaEye /> : <FaEyeSlash />}
+                </button>
+              </div>
               {errors.confirmnewpassword && (
                 <p className="text-red-600 text-sm">
                   {errors.confirmnewpassword.message}

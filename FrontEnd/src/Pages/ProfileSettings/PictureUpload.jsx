@@ -24,9 +24,7 @@ const PictureUpload = () => {
             autoClose: 3000,
             theme: localStorage.getItem('theme') == 'false' ? 'light' : 'dark'
           });
-        } else if (res.status > 300) {
-          throw new Error(res.data.message);
-        }
+        } 
       }
     } catch (error) {
       notify(`Error While Uploading picture: ${error.message}`, {

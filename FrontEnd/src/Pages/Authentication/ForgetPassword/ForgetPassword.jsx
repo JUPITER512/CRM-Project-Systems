@@ -4,14 +4,21 @@ import { useForm } from "react-hook-form";
 import AnimatePage from "@components/AnimatePage";
 import Axios from "@hooks/Axios";
 
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import { emailSchema } from "../../../utils/inputValidations.js";
+
+const schema=yup.object().shape({
+  forgetpasswordemail:emailSchema.fields.email
+})
 const ForgetPassword = () => {
-  const form = useForm();
+  const form = useForm({resolver:yupResolver(schema)});
   const { handleSubmit, register, formState } = form;
   const { errors } = formState;
   const navigate=useNavigate()
   async function onSubmit(data) {
     try {
-      const response=await Axios({requestType:'post',url:"/api/forget-password",data:{email:data.forgetpasswordemail}})
+      const response=await Axios({requestType:'post',url:"/forget-password",data:{email:data.forgetpasswordemail}})
       if(response.status==200){
         localStorage.setItem("forgetPasswordEmail",data.forgetpasswordemail)
         navigate('/Otp-Code',{replace:true})
@@ -42,7 +49,7 @@ const ForgetPassword = () => {
                 type="email"
                 id="email"
                 placeholder="abc@example.com"
-                className="mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 p-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("forgetpasswordemail", {
                   required: {
                     value: true,

@@ -60,10 +60,19 @@ const Adduser = () => {
           return [response.data.customer,...prev]
         })
 
-        setCustomerData(prevData => ({
+        setCustomerData((prevData) => ({
           ...prevData,
           totalCustomers: prevData.totalCustomers + 1,
+          activeCount: data.communicationStatus.status.toLowerCase() === 'active' ? prevData.activeCount + 1 : prevData.activeCount,
+          males: data.basic.gender.toLowerCase() === 'male' ? prevData.males + 1 : prevData.males,
+          females: data.basic.gender.toLowerCase() === 'female' ? prevData.females + 1 : prevData.females,
+          havePhone: data.basic.primaryPhone ? prevData.havePhone + 1 : prevData.havePhone,
+          communicationPreferences: {
+            ...prevData.communicationPreferences,
+            [data.communicationStatus.CommunicationPreferences.toLowerCase()]: (prevData.communicationPreferences[data.communicationStatus.CommunicationPreferences.toLowerCase()] || 0) + 1
+          }
         }));
+
         notify({
           message:"Customer Added Successfully",
           position:'top-right',
@@ -71,7 +80,7 @@ const Adduser = () => {
           type:"success",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
-        // reset();
+        reset()
       } else {
         console.error("Failed to add user:", response.status);
       }
