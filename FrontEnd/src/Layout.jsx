@@ -12,9 +12,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
-import { customerDataFamily } from "./Store/CustomerData";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import {useQuery } from "@tanstack/react-query";
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
   { page: "CustomerList", id: 2, icon: <CiCircleList /> },
@@ -88,7 +86,7 @@ const Layout = () => {
   },[])
 
   return (
-    <div className="w-screen h-screen relative bg-[#e0e7e9] dark:bg-gradient-to-bl dark:bg-slate-400 transition-colors duration-200 ease-linear">
+    <div className=" w-screen h-screen relative bg-[#e0e7e9] dark:bg-gradient-to-bl dark:bg-slate-400 transition-colors duration-200 ease-linear">
       <div className="navbar md:w-[72%] lg:w-[78%] xl:w-[82%] bg-gradient-to-tr shadow-sm from-[#eafbf7] to-[#d2e5fe] bg-opacity-45 w-[100%] absolute top-0 right-0 md:right-4 lg:right-8 z-10 h-[10%] rounded-br-lg flex items-center justify-between px-4 dark:bg-gradient-to-tr dark:from-[#1e293b] dark:to-[#334155] dark:bg-opacity-50 rounded-b-xl">
         <button
           className="block md:hidden text-3xl dark:text-white"
