@@ -7,6 +7,10 @@ export const paginationState = atom({
   },
 });
 
+export const totalRows=atom({
+  key:"totalRows",
+  default:0
+})
 export const tableDataState = atom({
   key: 'tableDataState',
   default: [],

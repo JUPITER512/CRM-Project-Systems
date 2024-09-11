@@ -2,7 +2,7 @@
   import { useForm } from "react-hook-form";
   import Axios from "@hooks/Axios";
   import CustomerForm from "./CustomerForm";
-  import { tableDataState } from "../../Store/TableData";
+  import { tableDataState ,totalRows} from "../../Store/TableData";
   import { customerDataFamily } from "../../Store/CustomerData";
   import { useRecoilState, useSetRecoilState } from "recoil";
   import notify from "../../utils/ToasterFunction";
@@ -26,7 +26,8 @@
 
   const Adduser = () => {
     const setTableState=useSetRecoilState(tableDataState);
-    const [customerData,setCustomerData]=useRecoilState(customerDataFamily)
+    const [customerData,setCustomerData]=useRecoilState(customerDataFamily);
+    const [tableRow,setTableRow]=useRecoilState(totalRows)
     const form = useForm({
       defaultValues: {
         basic: {
@@ -60,11 +61,11 @@
       },
       resolver: yupResolver(schema)
     });
-
-  const { register, handleSubmit, formState, reset} = form;
-  const { errors } = formState;
+  console.log(tableRow)
+  const { register, handleSubmit, formState,} = form;
+  const { errors ,isValid,isSubmitting,isDirty,} = formState;
+  console.log(isValid,isSubmitting,isDirty)
   const onSubmit = async (data) => {
-    console.log(data)
     try {
       const response = await Axios({
         requestType: "post",
@@ -75,7 +76,7 @@
         setTableState((prev)=>{
           return [response.data.customer,...prev]
         })
-
+        setTableRow(prev=>prev+1)
         setCustomerData((prevData) => ({
           ...prevData,
           totalCustomers: prevData.totalCustomers + 1,
@@ -122,6 +123,9 @@
           handleSubmit={handleSubmit}
           register={register}
           errors={errors}
+          isValid
+          isSubmitting
+          isDirty
         />
       </AnimatePage>
     </>

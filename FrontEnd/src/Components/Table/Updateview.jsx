@@ -107,7 +107,9 @@ const UpdateView = () => {
   });
 
   const { register, handleSubmit, formState, reset } = form;
-  const { errors } = formState;
+  const { errors ,isValid,
+    isSubmitting,
+    isDirty} = formState;
 
   useEffect(() => {
     if (customerData) {
@@ -203,6 +205,9 @@ const UpdateView = () => {
           register={register}
           errors={errors}
           isViewModelOnly={isViewModelOnly}
+          isValid
+          isSubmitting
+          isDirty
         />
       )}
     </AnimatePage>

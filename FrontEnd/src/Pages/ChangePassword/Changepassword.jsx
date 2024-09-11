@@ -9,6 +9,7 @@ import notify from '../../utils/ToasterFunction';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { passwordSchema } from "../../utils/inputValidations.js";
+import { ToastContainer } from "react-toastify";
 
 
 const schema=yup.object().shape({
@@ -49,7 +50,8 @@ const Changepassword = () => {
         setTimeout(() => {
           localStorage.clear()
           navigate('/Sign-in',{replace:true})
-        }, 2000);
+          location.reload()
+        }, 1000);
         
       }
    } catch (error) {
@@ -65,6 +67,7 @@ const Changepassword = () => {
 
   return (
     <AnimatePage>
+      <ToastContainer/>
       <div className="flex flex-col gap-4 justify-center items-center min-h-screen bg-gray-300 dark:bg-gray-900 rounded-lg px-4">
         <h1 className="text-lg md:text-2xl font-bold  text-center">
           Hi User You Can Cange Your Password Here

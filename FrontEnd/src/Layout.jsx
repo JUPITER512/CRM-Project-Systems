@@ -13,6 +13,10 @@ import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
 import {useQuery } from "@tanstack/react-query";
+import { customerDataFamily } from "./Store/CustomerData";
+import { paginationState,tableDataState } from "./Store/TableData";
+import { useSetRecoilState } from "recoil";
+
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
   { page: "CustomerList", id: 2, icon: <CiCircleList /> },
@@ -25,6 +29,10 @@ const Layout = () => {
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
+  const setCustomerData=useSetRecoilState(customerDataFamily);
+  const setPagionationState=useSetRecoilState(paginationState);
+  const setTableDataState=useSetRecoilState(tableDataState);
+
   const { isAuthenticated,setIsAuthenticated } = useAuthContext();
   const{data,isLoading,isError,error} =useQuery({
     queryKey:["User Info Api"],
@@ -43,8 +51,8 @@ const Layout = () => {
         }
         return response.data.data
       }
-    },
-    staleTime:60000
+      },
+      staleTime:6000
   })
  
 
@@ -62,6 +70,8 @@ const Layout = () => {
         navigate("/Sign-in", { replace: true });
         setIsAuthenticated(false)
         localStorage.clear()
+        location.reload()
+        // location.replace('/Sign-in')
       }
     } catch (error) {
       console.log(error.message)

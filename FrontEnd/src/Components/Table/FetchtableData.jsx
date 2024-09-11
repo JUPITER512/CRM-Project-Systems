@@ -1,33 +1,48 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { paginationState, tableDataState } from "../../Store/TableData";
+import {
+  paginationState,
+  tableDataState,
+  totalRows,
+} from "../../Store/TableData";
 import Axios from "@hooks/Axios";
-import { useEffect } from "react";
-const Query = () => {
-  const [pagination, setPagionationState] = useRecoilState(paginationState);
-  const [tableData, setTableData] = useRecoilState(tableDataState);
-  
-  const onSuccess = (data) => {
-    setTableData((prev) => [...prev, ...data]);
-  };
 
+const Query = () => {
+  const pagination = useRecoilValue(paginationState);
+  const [tableData, setTableData] = useRecoilState(tableDataState);
+  const setTotalRows = useSetRecoilState(totalRows);
+  const fetchTableData = async () => {
+    const response = await Axios({
+      requestType: "get",
+      url: `/get-customer?page=${pagination.pageIndex + 1}&limit=${
+        pagination.pageSize
+      }`,
+    });
+    if (response.status === 200) {
+      setTableData((prev) => {
+        const previousData = [...prev];
+        const newData = previousData.concat([...response.data.data]);
+        const filteredData = newData.filter((item, index, array) => {
+          return (
+            array.findIndex((otherItem) => otherItem._id === item._id) === index
+          );
+        });
+        return filteredData;
+      });
+
+      setTotalRows(parseInt(response.data.totalCustomers));
+      return response.data;
+    }
+  };
   const query = useQuery({
     queryKey: ["tabledata", pagination.pageIndex + 1, pagination.pageSize],
-    queryFn: async () => {
-      const response = await Axios({
-        requestType: "get",
-        url: `/get-customer?page=${pagination.pageIndex + 1}&limit=${pagination.pageSize}`,
-      });
-      if (response.status === 200) {
-        onSuccess(response.data.data);
-        return response.data;
-      }
-    },
-    staleTime: 30000,
-    enabled: !tableData.length || pagination.pageIndex > 0,
-    placeholderData: (prevData) => prevData || [], // Keep previous data while fetching
+    queryFn: fetchTableData,
+    staleTime: 300000,
+    enabled: true,
+    refetchOnMount: false,
+    placeholderData: keepPreviousData,
   });
-
+  console.log(tableData.length);
   return query;
 };
 

@@ -1,6 +1,4 @@
-import { atom, selector } from "recoil";
-import Axios from "@hooks/Axios";
-
+import { atom } from "recoil";
 export const customerDataFamily = atom({
   key: "customerDataFamily",
   default: {

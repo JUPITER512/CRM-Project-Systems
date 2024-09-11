@@ -7,6 +7,9 @@ const CustomerForm = ({
   register,
   today,
   isViewModelOnly,
+  isValid,
+  isSubmitting,
+  isDirty,
 }) => {
   return (
     <div className="w-full min-h-screen bg-gray-200 dark:bg-gray-900 p-4 md:p-6 lg:p-8 rounded-lg">
@@ -48,12 +51,7 @@ const CustomerForm = ({
               disabled={isViewModelOnly}
               id="gender"
               className="p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 dark:text-gray-200"
-              {...register(
-                "basic.gender"
-                //   {
-                //   required: "Gender is required",
-                // }
-              )}
+              {...register("basic.gender")}
             >
               <option value="" disabled>
                 Select Gender
@@ -459,11 +457,11 @@ const CustomerForm = ({
 
         {!isViewModelOnly && (
           <button
+            disabled={!isDirty || !isValid || !isSubmitting}
             type="submit"
             className="mx-auto bg-blue-500 text-white w-full md:w-1/5 px-6 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             <p className="flex items-center justify-center gap-2">
-              {" "}
               ADD <IoIosAddCircle className="text-xl" />
             </p>
           </button>
