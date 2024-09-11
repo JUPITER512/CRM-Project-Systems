@@ -47,10 +47,10 @@ const UpdateView = () => {
   const path = useLocation().pathname.split("/")[3];
   const navigate = useNavigate();
   const localData = tabledata.find((item) => item._id === id);
+  const setCustomerDataFamily = useSetRecoilState(customerDataFamily);
 
 
   const customerStatsData=useCallback((data)=>{
-      const setCustomerDataFamily = useSetRecoilState(customerDataFamily);
       setCustomerDataFamily((prevData) => {
   
         const gender = data.basic.gender.toLowerCase();
