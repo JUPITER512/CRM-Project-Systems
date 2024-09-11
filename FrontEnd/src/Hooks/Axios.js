@@ -20,6 +20,8 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(err); 
   }
 );
+
+let apiCallSent=null;
 axiosInstance.interceptors.response.use(
   function (response) {
     return response;
@@ -29,15 +31,19 @@ axiosInstance.interceptors.response.use(
     if (error?.response?.status === 401 && !originalRequest?._retry) {
       originalRequest._retry = true;
       try {
-        const response = await axiosInstance.post("/update-access-token");
-        const { accessToken } = response.data;
-        localStorage.setItem("accessToken", accessToken);
-        axiosInstance.defaults.headers.Authorization = `${accessToken}`;;
-        return axiosInstance(originalRequest);
+        apiCallSent=true
+        if(apiCallSent){
+          const response = await axiosInstance.post("/update-access-token");
+          const { accessToken } = response.data;
+          localStorage.setItem("accessToken", accessToken);
+          axiosInstance.defaults.headers.Authorization = `${accessToken}`;;
+          return axiosInstance(originalRequest);
+        }
       } catch (error) {
         window.location.href = "/Sign-in";
       }
     }
+    apiCallSent=false;
     return Promise.reject(error);
   }
 );

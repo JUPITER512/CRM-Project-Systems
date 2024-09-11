@@ -51,8 +51,8 @@ const Layout = () => {
         }
         return response.data.data
       }
-      },
-      staleTime:6000
+    },
+    staleTime:60000
   })
  
 
@@ -70,8 +70,8 @@ const Layout = () => {
         navigate("/Sign-in", { replace: true });
         setIsAuthenticated(false)
         localStorage.clear()
-        location.reload()
-        // location.replace('/Sign-in')
+        // location.reload()
+        location.replace()
       }
     } catch (error) {
       console.log(error.message)
