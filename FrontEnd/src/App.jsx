@@ -14,30 +14,50 @@ import Changepassword from "@pages/ChangePassword/Changepassword";
 import AuthContextProvider from "@context/Auth";
 import ProtectedRoute from "@hooks/ProtectedRoute";
 import UpdateView from "@components/Table/Updateview";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-
+import RouteToDashboard from "@hooks/RouteToDashboard";
 
 const router = createBrowserRouter([
   {
     path: "/Sign-in",
-    element: <Signin />,
+    element: (
+      <RouteToDashboard>
+        <Signin />
+      </RouteToDashboard>
+    ),
   },
   {
     path: "/Sign-up",
-    element: <SignUp />,
+    element: (
+      <RouteToDashboard>
+        <SignUp />
+      </RouteToDashboard>
+    ),
   },
   {
     path: "/Forget-password",
-    element: <ForgetPassword />,
+    element: (
+      <RouteToDashboard>
+        <ForgetPassword />
+      </RouteToDashboard>
+    ),
   },
   {
     path: "/Change-password",
-    element: <NewPassword />,
+    element: (
+      <RouteToDashboard>
+        <NewPassword />,
+      </RouteToDashboard>
+    ),
   },
   {
     path: "/Otp-Code",
-    element: <Otp />,
+    element: (
+      <RouteToDashboard>
+        <Otp />
+      </RouteToDashboard>
+    ),
   },
   {
     path: "/Home",
@@ -86,7 +106,7 @@ export default function App() {
   return (
     <AuthContextProvider>
       <RouterProvider router={router} />
-      <ToastContainer/>
+      <ToastContainer />
     </AuthContextProvider>
   );
 }

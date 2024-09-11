@@ -70,7 +70,7 @@ const Changepassword = () => {
       <ToastContainer/>
       <div className="flex flex-col gap-4 justify-center items-center min-h-screen bg-gray-300 dark:bg-gray-900 rounded-lg px-4">
         <h1 className="text-lg md:text-2xl font-bold  text-center">
-          Hi User You Can Cange Your Password Here
+          Hi {localStorage.getItem('name')} You Can Cange Your Password Here
         </h1>
         <div className="w-full max-w-md p-6 bg-white dark:bg-gray-800 shadow-md rounded-lg ">
           <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-100">

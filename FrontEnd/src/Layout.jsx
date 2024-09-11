@@ -29,10 +29,6 @@ const Layout = () => {
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
-  const setCustomerData=useSetRecoilState(customerDataFamily);
-  const setPagionationState=useSetRecoilState(paginationState);
-  const setTableDataState=useSetRecoilState(tableDataState);
-
   const { isAuthenticated,setIsAuthenticated } = useAuthContext();
   const{data,isLoading,isError,error} =useQuery({
     queryKey:["User Info Api"],
@@ -52,7 +48,7 @@ const Layout = () => {
         return response.data.data
       }
     },
-    staleTime:60000
+    staleTime:1800000
   })
  
 

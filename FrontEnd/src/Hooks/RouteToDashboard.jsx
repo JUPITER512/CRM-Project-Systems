@@ -11,7 +11,7 @@ const decodeJwt = (crmToken, enteredEmail) => {
   }
 };
 
-const ProtectedRoute = ({ children }) => {
+const RouteToDashboard = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const navigate = useNavigate();
 
@@ -21,15 +21,14 @@ const ProtectedRoute = ({ children }) => {
 
     if (!tokenValue || !enteredEmail) {
       setIsAuthenticated(false);
-      navigate('/Sign-in');
       return;
     }
 
     if (decodeJwt(tokenValue, enteredEmail)) {
       setIsAuthenticated(true);
+      navigate('/Home/Dashboard');
     } else {
       setIsAuthenticated(false);
-      navigate('/Sign-in');
     }
   }, [navigate]);
 
@@ -37,7 +36,7 @@ const ProtectedRoute = ({ children }) => {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? children : null;
+  return isAuthenticated ? null : <div>{children}</div>;
 };
 
-export default ProtectedRoute;
+export default RouteToDashboard;

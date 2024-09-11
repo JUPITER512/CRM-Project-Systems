@@ -3,13 +3,14 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Axios from "@hooks/Axios";
 import { tableDataState } from "../../Store/TableData";
-import { useRecoilState } from "recoil";
+import { useRecoilState} from "recoil";
 import CustomerForm from "../../Pages/AddUser/CustomerForm";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import notify from "../../Utils/ToasterFunction";
-
+import { useSetRecoilState } from "recoil";
+import { customerDataFamily } from "../../Store/CustomerData";
 import {
   emailSchema,
   nameSchema,
@@ -40,12 +41,49 @@ const schema = yup.object().shape({
   }),
 });
 const UpdateView = () => {
+  
   const [tabledata, setTableState] = useRecoilState(tableDataState);
   const { id } = useParams();
   const path = useLocation().pathname.split("/")[3];
   const navigate = useNavigate();
-
   const localData = tabledata.find((item) => item._id === id);
+
+
+  const customerStatsData=useCallback((data)=>{
+      const setCustomerDataFamily = useSetRecoilState(customerDataFamily);
+      setCustomerDataFamily((prevData) => {
+  
+        const gender = data.basic.gender.toLowerCase();
+        const communicationStatus = data?.communicationStatus?.status.toLowerCase();
+        const communicationPreferences = data.communicationStatus.CommunicationPreferences.toLowerCase();
+        const totalCount=prevData.totalCustomers
+  
+        let malesCount=prevData.males;
+        let femalesCount=prevData.females
+        if(gender=='male'){
+          malesCount+=1;
+          femalesCount = prevData.females > 0 ? prevData.females - 1 : 0; 
+        }
+        else if (gender === "female") {
+          femalesCount += 1;
+          malesCount = prevData.males > 0 ? prevData.males - 1 : 0; 
+        }
+  
+        return {
+          activeCount:communicationStatus === "inactive"? prevData.activeCount - 1: prevData.activeCount + 1,
+          males: malesCount,
+          females: femalesCount,
+          havePhone: prevData.havePhone,
+          communicationPreferences: {
+            ...prevData.communicationPreferences,
+            [communicationPreferences]:
+              (prevData.communicationPreferences[communicationPreferences] || 0) + 1,
+          },
+          totalCustomers:totalCount,
+        };
+      });
+    
+  },[])
 
   const {
     data: customerData,
@@ -55,8 +93,8 @@ const UpdateView = () => {
     queryKey: ["customerData", id],
     queryFn: async () => {
       const response = await Axios({
-        requestType:'get',
-        url:`/get-single-customer/${id}`
+        requestType: "get",
+        url: `/get-single-customer/${id}`,
       });
       if (response.status === 200) {
         return response.data.data;
@@ -90,7 +128,8 @@ const UpdateView = () => {
             zipCode: formData.address?.zipCode || "",
           },
           communicationStatus: {
-            CommunicationPreferences:formData.customerCommunicationPreference || "",
+            CommunicationPreferences:
+              formData.customerCommunicationPreference || "",
             status: formData.customerStatus || "",
           },
           company: {
@@ -107,9 +146,7 @@ const UpdateView = () => {
   });
 
   const { register, handleSubmit, formState, reset } = form;
-  const { errors ,isValid,
-    isSubmitting,
-    isDirty} = formState;
+  const { errors, isValid, isSubmitting, isDirty } = formState;
 
   useEffect(() => {
     if (customerData) {
@@ -147,18 +184,25 @@ const UpdateView = () => {
     }
   }, [customerData, reset]);
 
+  
   const onSubmit = async (data) => {
     try {
-      const response = await Axios({requestType:'put',url:"/update-customer-info",data: {
-        id,
-        newData: data,
-      }});
+      const response = await Axios({
+        requestType: "put",
+        url: "/update-customer-info",
+        data: {
+          id,
+          newData: data,
+        },
+      });
       if (response.status === 200) {
         setTableState((prev) =>
           prev.map((item) =>
             item._id === id ? { ...response.data.data } : item
           )
         );
+        customerStatsData(data)
+
         notify({
           message: "Customer Information Updated Successfully",
           position: "top-right",
@@ -172,7 +216,7 @@ const UpdateView = () => {
       }
     } catch (error) {
       notify({
-        message: ` ${err.response.data.message}`,
+        message: ` ${error?.response?.data?.message}`,
         position: "top-right",
         autocloseTime: 3000,
         type: "error",
@@ -205,9 +249,9 @@ const UpdateView = () => {
           register={register}
           errors={errors}
           isViewModelOnly={isViewModelOnly}
+          isDirty
           isValid
           isSubmitting
-          isDirty
         />
       )}
     </AnimatePage>

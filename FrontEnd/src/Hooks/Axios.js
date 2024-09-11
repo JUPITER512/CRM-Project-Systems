@@ -8,13 +8,13 @@ function getJwtDataFromLocalStorage() {
   return token;
 }
 axiosInstance.interceptors.request.use(
-  function (config) {
+  function (request) {
     const token = getJwtDataFromLocalStorage();
     if (!token) {
-      return config;
+      return request;
     }
-    config.headers.Authorization = token;
-    return config
+    request.headers.Authorization = token;
+    return request
   },
   function (err) {
     return Promise.reject(err); 
@@ -28,8 +28,10 @@ axiosInstance.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-    if (error?.response?.status === 401 && !originalRequest?._retry) {
+
+    if (error?.response?.status === 401 && error?.response?.data?.message=='Invalid or expired token' && !originalRequest?._retry) {
       originalRequest._retry = true;
+
       try {
         apiCallSent=true
         if(apiCallSent){
@@ -42,9 +44,13 @@ axiosInstance.interceptors.response.use(
       } catch (error) {
         window.location.href = "/Sign-in";
       }
+
+
     }
+
     apiCallSent=false;
     return Promise.reject(error);
+
   }
 );
 const Axios = async ({ requestType, url, header, params, query, data }) => {
