@@ -20,7 +20,6 @@ import {
 } from "../../utils/inputValidations";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { DevTool } from "@hookform/devtools";
 
 const today = new Date().toISOString().split("T")[0];
 const formatDateForInput = (dateString) => {
@@ -172,7 +171,7 @@ const UpdateView = () => {
             localStorage.getItem("theme") == "false" ? "light" : "dark"
           }`,
         });
-        // navigate("/home/CustomerList");
+        navigate("/home/CustomerList");
       }
     } catch (error) {
       notify({
@@ -260,7 +259,6 @@ const UpdateView = () => {
           isDirty={!isDirty}
         />
       )}
-      <DevTool control={control}/>
     </AnimatePage>
   );
 };

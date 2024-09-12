@@ -8,6 +8,7 @@ import {
 import Axios from "@hooks/Axios";
 
 const Query = () => {
+
   const pagination = useRecoilValue(paginationState);
   const [tableData, setTableData] = useRecoilState(tableDataState);
   const setTotalRows = useSetRecoilState(totalRows);
@@ -19,6 +20,7 @@ const Query = () => {
       }`,
     });
     if (response.status === 200) {
+      
       setTableData((prev) => {
         const previousData = [...prev];
         const newData = previousData.concat([...response.data.data]);

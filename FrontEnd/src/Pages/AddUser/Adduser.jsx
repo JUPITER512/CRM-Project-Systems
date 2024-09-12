@@ -10,7 +10,6 @@
   import { emailSchema ,nameSchema,phoneNumberSchema,statusSchema,dobSchema} from "../../utils/inputValidations";
   import { yupResolver } from "@hookform/resolvers/yup";
   import * as yup from 'yup'
-import { DevTool } from "@hookform/devtools";
 
   const schema = yup.object().shape({
     basic: yup.object().shape({
@@ -62,7 +61,7 @@ import { DevTool } from "@hookform/devtools";
       },
       resolver: yupResolver(schema)
     });
-  const { register, handleSubmit, formState,control} = form;
+  const { register, handleSubmit, formState,control,reset} = form;
   const { errors ,isValid,isSubmitting,isDirty} = formState;
   const onSubmit = async (data) => {
     try {
@@ -96,7 +95,7 @@ import { DevTool } from "@hookform/devtools";
           type:"success",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
-        // reset()
+        reset()
       } 
     } catch (err) {
       console.error("Error adding user:", err);
@@ -126,7 +125,6 @@ import { DevTool } from "@hookform/devtools";
           isSubmitting={isSubmitting}
           isDirty={!isDirty}
         />
-        <DevTool control={control}/>
       </AnimatePage>
     </>
   );

@@ -22,9 +22,7 @@ export const EmailVerification=async(req,res)=>{
     }
     userInDb.verify=true;
     userInDb.save();
-    return res.status(200).json({
-      message:"Email Verified"
-    })
+    return res.render('verifyEjs')
   } catch (error) {
     return res.status(500).json({
       message:"Internal Server Error",
@@ -121,7 +119,7 @@ export const Sign_in = async (req, res) => {
     if(!userInDb.refreshToken){
       const refreshToken=userInDb.generateRefershToken();
       userInDb.refreshToken = refreshToken;
-      await userInDb.save()
+      userInDb.save()
     }
     const options = {
       httpOnly: true,
@@ -193,7 +191,9 @@ export const Forget_Password = async (req, res) => {
     const otp = generateOTP();
     userInDatabase.otp = otp;
     userInDatabase.save();
-    await sendmail({email:userInDatabase.email,code:otp,subject:"Crm Suite Password Change"})
+    
+    
+    sendmail({email:userInDatabase.email,code:otp,subject:"Crm Suite Password Change"})
     return res.status(200).json({
       message: "Code is sent to your Email",
     });
@@ -226,7 +226,7 @@ export const Verify_Otp = async (req, res) => {
       });
     }
     user.otp = undefined;
-    await user.save();
+    user.save();
     return res.status(200).json({
       message: "OTP verified successfully",
       user: {
@@ -267,7 +267,7 @@ export const Change_Password = async (req, res) => {
     }
 
     findedUser.password = password;
-    await findedUser.save();
+    findedUser.save();
     res.status(200).json({
       message: "Your Password is Successfully Change",
     });
@@ -326,7 +326,7 @@ export const Logout = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     findedUser.refreshToken = undefined;
-    await findedUser.save();
+    findedUser.save();
     res
       .status(200)
       .clearCookie("accessToken", { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
@@ -460,36 +460,29 @@ export const User_Customer_Information=async(req,res)=>{
         message:"User not found"
       })
     }
-    const customerData=await Customer.find({
-      addedBy:userId
-    })
-    let activeCount=null;
-    let males=null;
-    let females=null;
-    let havePhone=null;
-    const communicationPreferences={}
-    const totalCustomers=customerData.length; 
-    customerData.forEach((item)=>{
-      if(item?.gender?.toLowerCase()=='male'){
-        males+=1;
-      }else if(item?.gender?.toLowerCase()=='female'){
-        females+=1
-      }
-      if(item.customerStatus.toLowerCase()=='active'){
-        activeCount+=1;
-      }
-      if(item.primaryPhone){
-        havePhone+=1
-      }
+    const customerData = await Customer.find({ addedBy: userId }).select('gender customerStatus primaryPhone customerCommunicationPreference');
+    const { totalCustomers, activeCount, males, females, havePhone, communicationPreferences } = customerData.reduce((acc, item) => {
+      if (item?.gender?.toLowerCase() === 'male') acc.males += 1;
+      if (item?.gender?.toLowerCase() === 'female') acc.females += 1;
+      if (item.customerStatus.toLowerCase() === 'active') acc.activeCount += 1;
+      if (item.primaryPhone) acc.havePhone += 1;
+
       if (item?.customerCommunicationPreference) {
         const preference = item.customerCommunicationPreference.toLowerCase().trim();
-        if (communicationPreferences[preference]) {
-            communicationPreferences[preference] += 1;
-        } else {
-            communicationPreferences[preference] = 1;
-        }
-    }
-    })
+        acc.communicationPreferences[preference] = (acc.communicationPreferences[preference] || 0) + 1;
+      }
+
+      acc.totalCustomers += 1;
+      return acc;
+    }, {
+      totalCustomers: 0,
+      activeCount: 0,
+      males: 0,
+      females: 0,
+      havePhone: 0,
+      communicationPreferences: {}
+    });
+
 
     return res.status(200).json({
       message:"Success",
@@ -531,7 +524,7 @@ export const Change_Password_FromProfile=async(req,res)=>{
       });
     }
     userInDb.password = newPassword;
-    await userInDb.save();
+    userInDb.save();
     res.status(200).json({
       message: "Password updated successfully"
     });
