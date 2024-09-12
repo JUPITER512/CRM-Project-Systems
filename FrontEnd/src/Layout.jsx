@@ -13,9 +13,6 @@ import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
 import {useQuery } from "@tanstack/react-query";
-import { customerDataFamily } from "./Store/CustomerData";
-import { paginationState,tableDataState } from "./Store/TableData";
-import { useSetRecoilState } from "recoil";
 
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
@@ -52,6 +49,7 @@ const Layout = () => {
   })
  
 
+  // handle side bar for upto md screens
   function handleSidebar() {
     setSidebar(!sidebar);
     if (userMenu) {
@@ -59,6 +57,7 @@ const Layout = () => {
     }
   }
 
+  // logout handlers
  async function handleLogout() {
     try {
       const res=await Axios({requestType:'get',url:'/logout-user'})
@@ -66,16 +65,18 @@ const Layout = () => {
         navigate("/Sign-in", { replace: true });
         setIsAuthenticated(false)
         localStorage.clear()
-        // location.reload()
-        location.replace()
+        // reloading to clear all the in memory state values
+        location.reload()
       }
     } catch (error) {
       console.log(error.message)
     }
   }
+  // when user click on avatar shows menu of logout/changepassword top right
   function handleUserMenu() {
     setUserMenu(!userMenu);
   }
+  // left sidebar menu items click handler that navigate the user to the desired page
   function handleSidebarMenuClick(page) {
     navigate(`/home/${page}`);
     if (sidebar) {
@@ -85,6 +86,7 @@ const Layout = () => {
       setUserMenu(!userMenu);
     }
   }
+  // if the user is not authenticate then he/she is not authenticated
   useEffect(()=>{
     if(!isAuthenticated){
       navigate('/Sign-in')
@@ -198,6 +200,7 @@ const Layout = () => {
         </div>
       </div>
       <main className="md:ml-[25%] lg:ml-[20%] xl:ml-[15%] h-[90%] p-4 overflow-y-auto absolute top-[10%] md:w-[75%] lg:w-[80%] xl:w-[85%] w-full dark:text-white">
+        {/* all the main body content such as dashboard /  customer list table place here outlet is given by react router dom */}
         <Outlet />
       </main>
     </div>

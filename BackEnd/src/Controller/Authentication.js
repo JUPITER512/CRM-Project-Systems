@@ -413,18 +413,10 @@ export const handleImage = async (req, res) => {
       message: userInDb.pictureId ? "Image Updated Successfully" : "Image Uploaded Successfully"
     });
   } catch (error) {
-    res.status(500).json({
+   return res.status(500).json({
       message: "Internal Server Error",
       error: error.message
     });
-  } finally {
-    if (req.file) {
-      fs.unlink(req.file.path, (unlinkError) => {
-        if (unlinkError) {
-          console.error("Failed to delete the file:", unlinkError);
-        }
-      });
-    }
   }
 };
 

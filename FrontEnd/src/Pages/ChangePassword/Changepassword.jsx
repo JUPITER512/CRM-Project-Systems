@@ -32,7 +32,6 @@ const Changepassword = () => {
 
   const handleChangePassword = async (data) => {
    try {
-    console.log(data)
       const response=await Axios({
         requestType:'post',
         url:'/change-password-fromProfile',

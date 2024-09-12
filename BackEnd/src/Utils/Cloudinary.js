@@ -6,25 +6,29 @@ cloudinary.config({
     api_key:process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET
 })
-async function Cloudinary_Upload(filepath,public_id=null) {
+async function Cloudinary_Upload(filepath, public_id = null) {
     try {
-        if (!filepath) {
-            console.error("Filepath is required");
-            return null;
-        }
-        if(public_id){
-            await cloudinary.uploader.destroy(public_id)
-        }
-        const response=await cloudinary.uploader.upload(filepath,{
-            resource_type:"image",
-        })
-        console.log("Image Has been successfully on cloudinary",response.secure_url)
-        return response
+      if (!filepath) {
+        console.error("Filepath is required");
+        return null;
+      }
+      if (public_id) {
+        await cloudinary.uploader.destroy(public_id);
+      }
+      const response = await cloudinary.uploader.upload(filepath, {
+        resource_type: "image",
+      });
+      console.log("Image Has been successfully uploaded to Cloudinary", response.secure_url);
+      return response;
     } catch (error) {
-        console.log("Error While Uploading Picture to Cloudinary ",error.message)
-        fs.unlinkSync(filepath);
-        return null
+      console.error("Error While Uploading Picture to Cloudinary", error.message);
+      fs.unlink(filepath, (unlinkError) => {
+        if (unlinkError) {
+          console.error("Failed to delete the file after error:", unlinkError);
+        }
+      });
+      return null;
     }
-}
-
+  }
+  
 export default Cloudinary_Upload

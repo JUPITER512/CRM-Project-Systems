@@ -19,6 +19,7 @@ const schema = yup.object().shape({
   email: emailSchema.fields.email,
   password: passwordSchema.fields.password,
 });
+// import the wrapper to wrap the form in the login screen
 const Signin = () => {
   const [loader, setLoader] = useState(false);
   const [showPassWord, setShowPassword] = useState(false);
@@ -27,7 +28,8 @@ const Signin = () => {
   const { handleSubmit, register, formState } = form;
   const { errors } = formState;
   const authContext = useAuthContext();
-
+  //simple form submit handler
+  // register retun name,onchange,onblur,ref so i destruct it by giving the name on every input
   async function onSubmit(data) {
     try {
       setLoader(true);
@@ -48,6 +50,7 @@ const Signin = () => {
           }
         }
         localStorage.setItem("enteredEmail", data.email);
+        //setting the autcontext means user is authenticated and can use the app
         authContext.setIsAuthenticated(true);
         setTimeout(() => {
           navigate("/Home/Dashboard", { replace: true });
@@ -70,6 +73,7 @@ const Signin = () => {
       <AuthenticationWrapper title={"Welcome Back To Crm Suite"}>
         <AnimatePage>
           <form
+            //passing the onSubmit method to destructured handleSubmit method from form hook
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col items-center w-full my-10 p-4 md:p-6 lg:p-8 bg-transparent rounded-lg"
           >

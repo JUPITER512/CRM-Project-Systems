@@ -10,6 +10,7 @@
   import { emailSchema ,nameSchema,phoneNumberSchema,statusSchema,dobSchema} from "../../utils/inputValidations";
   import { yupResolver } from "@hookform/resolvers/yup";
   import * as yup from 'yup'
+import { DevTool } from "@hookform/devtools";
 
   const schema = yup.object().shape({
     basic: yup.object().shape({
@@ -61,10 +62,8 @@
       },
       resolver: yupResolver(schema)
     });
-  console.log(tableRow)
-  const { register, handleSubmit, formState,} = form;
-  const { errors ,isValid,isSubmitting,isDirty,} = formState;
-  console.log(isValid,isSubmitting,isDirty)
+  const { register, handleSubmit, formState,control} = form;
+  const { errors ,isValid,isSubmitting,isDirty} = formState;
   const onSubmit = async (data) => {
     try {
       const response = await Axios({
@@ -123,10 +122,11 @@
           handleSubmit={handleSubmit}
           register={register}
           errors={errors}
-          isValid
-          isSubmitting
-          isDirty
+          isValid={!isValid}
+          isSubmitting={isSubmitting}
+          isDirty={!isDirty}
         />
+        <DevTool control={control}/>
       </AnimatePage>
     </>
   );

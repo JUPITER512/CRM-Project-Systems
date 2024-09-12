@@ -8,13 +8,15 @@ import { tableDataState } from "../../Store/TableData";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { customerDataFamily } from "../../Store/CustomerData";
 import notify from "../../utils/ToasterFunction";
-
+// columns for table 
+// header is the column heading name
+// accessorKey is use to reference the data in the data array "key of the value"
+// id use when there is no accessor key
 export const Columns = [
   {
     header: "ID⬆️⬇️",
     id: "id",
     cell: (info) => {
-      console.log();
       return <p className=" text-center">{parseInt(info.row.id) + 1}</p>;
     },
   },
@@ -59,10 +61,13 @@ export const Columns = [
     header: "Action",
     id: "action",
     cell: (info) => {
+      // get id of the row mongoDb object id
       const id = info.row.original._id;
+      //setterFunction to alter the table
       const setTableDataState = useSetRecoilState(tableDataState);
+      // implementing state variable for recoil to update the customer stats on dashboard
       const [customerdata,setCustomerData] = useRecoilState(customerDataFamily);
-      
+      // delete handler
       async function handleDelete(id) {
         try {
           const response = await Axios({
@@ -77,6 +82,14 @@ export const Columns = [
             setCustomerData(prevData => ({
               ...prevData,
               totalCustomers: prevData.totalCustomers - 1,
+              activeCount:info.row.original.customerStatus.toLowerCase()==='active'?prevData.activeCount-1:prevData.activeCount,
+              males:info.row.original.gender.toLowerCase()==='male' && prevData.males-1,
+              females:info.row.original.gender.toLowerCase()==='female' && prevData.females-1,
+              havePhone:prevData.havePhone-1,
+              communicationPreferences: {
+                ...prevData.communicationPreferences,
+                [info.row.original.customerCommunicationPreference.toLowerCase()]: (prevData.communicationPreferences[info.row.original.customerCommunicationPreference.toLowerCase()] || 0) - 1
+              }
             }));
             setTableDataState((prev) => {
               const previousData = [...prev];

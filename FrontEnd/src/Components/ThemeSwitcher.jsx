@@ -3,9 +3,9 @@ import { CiSun } from "react-icons/ci";
 import { FaRegMoon } from "react-icons/fa";
 
 const ThemeSwitcher = () => {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    return savedTheme ? JSON.parse(savedTheme) : false;
+  const [theme, setTheme] = useState(()=>{
+    const savedTheme = localStorage.getItem('theme');
+    return Boolean(savedTheme) || false
   });
 
   useEffect(() => {

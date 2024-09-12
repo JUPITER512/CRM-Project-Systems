@@ -457,7 +457,7 @@ const CustomerForm = ({
 
         {!isViewModelOnly && (
           <button
-            disabled={!isDirty || !isValid || !isSubmitting}
+            disabled={isDirty || isValid || isSubmitting}
             type="submit"
             className="mx-auto bg-blue-500 text-white w-full md:w-1/5 px-6 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition-colors dark:bg-blue-600 dark:hover:bg-blue-700"
           >

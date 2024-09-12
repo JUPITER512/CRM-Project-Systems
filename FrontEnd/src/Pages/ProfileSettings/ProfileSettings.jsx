@@ -28,7 +28,6 @@ const ProfileSettings = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data)
       const response=await Axios({
         requestType:'put',
         url:'/update-user-info',
