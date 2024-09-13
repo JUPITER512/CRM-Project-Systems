@@ -22,7 +22,9 @@ export const EmailVerification=async(req,res)=>{
     }
     userInDb.verify=true;
     userInDb.save();
-    return res.render('verifyEjs')
+    return res.status(200).json({
+      message:"Email verified"
+    })
   } catch (error) {
     return res.status(500).json({
       message:"Internal Server Error",
