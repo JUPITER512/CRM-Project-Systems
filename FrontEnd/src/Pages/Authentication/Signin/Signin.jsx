@@ -43,18 +43,13 @@ const Signin = () => {
         localStorage.removeItem("enteredEmail");
         const userdataObject = response.data;
         for (let [key, value] of Object.entries(userdataObject)) {
-          if (key == "data" && typeof value === "object") {
-            Object.assign(localStorage, value);
-          } else {
-            localStorage.setItem(key, value);
-          }
+            localStorage.setItem(key, value); 
         }
         localStorage.setItem("enteredEmail", data.email);
-        //setting the autcontext means user is authenticated and can use the app
         authContext.setIsAuthenticated(true);
-        setTimeout(() => {
-          navigate("/Home/Dashboard", { replace: true });
-        }, 700);
+    
+        navigate("/Home", { replace: true });
+
       }
     } catch (error) {
       notify({

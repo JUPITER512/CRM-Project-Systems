@@ -13,6 +13,10 @@ import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
 import {useQuery } from "@tanstack/react-query";
+import { useSetRecoilState } from "recoil";
+import { paginationState, tableDataState, totalRows } from "./Store/TableData";
+import { customerDataFamily } from "./Store/CustomerData";
+import { userImageAtom } from "./Store/UserImage";
 
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
@@ -22,6 +26,11 @@ const pages = [
 ];
 
 const Layout = () => {
+  const resettable=useSetRecoilState(tableDataState)
+  const resetpagination=useSetRecoilState(paginationState)
+ const resettotalRows= useSetRecoilState(totalRows)
+ const resetcustomerdata= useSetRecoilState(customerDataFamily);
+  const resetuserimage=useSetRecoilState(userImageAtom)
   const [sidebar, setSidebar] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
@@ -65,8 +74,11 @@ const Layout = () => {
         navigate("/Sign-in", { replace: true });
         setIsAuthenticated(false)
         localStorage.clear()
-        // reloading to clear all the in memory state values
-        location.reload()
+        resetuserimage()
+        resetcustomerdata()
+        resettotalRows()
+        resettable();
+        resetpagination();
       }
     } catch (error) {
       console.log(error.message)
@@ -92,7 +104,9 @@ const Layout = () => {
       navigate('/Sign-in')
     }
   },[])
-
+  if(isLoading){
+    return <div className="loader absolute left-[50%] top-[50%] translate-x-[-50%]"></div>
+  }
   return (
     <div className=" w-screen h-screen relative bg-[#e0e7e9] dark:bg-gradient-to-bl dark:bg-slate-400 transition-colors duration-200 ease-linear">
       <div className="navbar md:w-[72%] lg:w-[78%] xl:w-[82%] bg-gradient-to-tr shadow-sm from-[#eafbf7] to-[#d2e5fe] bg-opacity-45 w-[100%] absolute top-0 right-0 md:right-4 lg:right-8 z-10 h-[10%] rounded-br-lg flex items-center justify-between px-4 dark:bg-gradient-to-tr dark:from-[#1e293b] dark:to-[#334155] dark:bg-opacity-50 rounded-b-xl">

@@ -48,6 +48,10 @@ const userSchema=new mongoose.Schema({
     },
     contact:{
         type:String
+    },
+    removedCustomers:{
+        type:Number,
+        default:0
     }
 },{timestamps:true})
 userSchema.pre('save',async function(next){

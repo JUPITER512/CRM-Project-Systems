@@ -75,10 +75,10 @@ export const Columns = [
             url: "/remove-customer",
           });
           if (response.status == 200) {
-            const removedCustomer = localStorage.getItem("removedCustomer");
+            const removedCustomer = localStorage.getItem("removedCustomers");
             const currentCount = parseInt(removedCustomer) || 0;
             const newCount = currentCount + 1;
-            localStorage.setItem("removedCustomer", newCount);
+            localStorage.setItem("removedCustomers", newCount);
             setCustomerData(prevData => ({
               ...prevData,
               totalCustomers: prevData.totalCustomers - 1,

@@ -24,6 +24,10 @@ const router = createBrowserRouter([
     element: <Navigate to="/Sign-in" />,  // Redirect from root path to /Sign-in
   },
   {
+    path: "/Home",
+    element: <Navigate to="/Home/Dashboard" />,  // Redirect from root path to /Sign-in
+  },
+  {
     path: "/Sign-in",
     element: (
       // route to dashboard when there is data in localstorage means prevent the user to signIn etc again and navigate them to the dashboard page

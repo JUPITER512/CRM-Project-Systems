@@ -31,7 +31,7 @@ const Dashboard = () => {
       }
     },
     //means api should call or not it will only call on referesh when the customerstats recoil state is empty==0
-    enabled: customerData.contents.totalCustomers === 0,
+    enabled: customerData?.contents?.totalCustomers === 0,
   });
 
   if (customerData.state === "loading" || isLoading) {
@@ -42,7 +42,6 @@ const Dashboard = () => {
     return <div>Error loading data...</div>;
   }
 
-
   // destructuring the data from state.content
   const {
     totalCustomers,
@@ -51,7 +50,7 @@ const Dashboard = () => {
     females,
     havePhone,
     communicationPreferences,
-  } = customerData.contents;
+  } = customerData?.contents|| {};
 
   // Ensure that calculated values are not less than 0
   const inactiveCount = Math.max(0, totalCustomers - activeCount);
@@ -69,7 +68,7 @@ const Dashboard = () => {
               Total : {Math.max(0, totalCustomers)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              Remove : {localStorage.getItem('removedCustomer') || 0}
+              Remove : {localStorage.getItem('removedCustomers') || 0}
             </div>
           </div>
           <div className="bg-slate-500 dark:bg-slate-700 w-full rounded-lg p-4">

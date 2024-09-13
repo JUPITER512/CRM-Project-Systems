@@ -41,7 +41,6 @@ const customerSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true,
         trim: true,
         lowercase: true,
         index: true,
@@ -62,8 +61,10 @@ const customerSchema = new mongoose.Schema({
     },
     additionalInfoNote: { type: String, trim: true },
     additionalInfoSourceOfLead: { type: String },
+   
 
 }, { timestamps: true });
+customerSchema.index({ addedBy: 1, email: 1 }, { unique: true });
 
 
 customerSchema.methods.totalCount = async function() {

@@ -37,7 +37,7 @@ const Query = () => {
     }
   };
   const query = useQuery({
-    queryKey: ["tabledata", pagination.pageIndex + 1, pagination.pageSize],
+    queryKey: ["tabledata", pagination?.pageIndex + 1, pagination?.pageSize],
     queryFn: fetchTableData,
     staleTime: 1800000,
     enabled: true,
