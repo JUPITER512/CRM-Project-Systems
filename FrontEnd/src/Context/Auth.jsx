@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useQueryClient } from "@tanstack/react-query";
 //creating authenctication context
 export const AuthContext = createContext(null);
 
@@ -15,6 +16,8 @@ export const useAuthContext = () => {
 export default function AuthContextProvider({ children }) {
   // isAuthencticated state if true means yes else no
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const queryClient = useQueryClient();
+
 
   //it will call to get accessToken if access token exist then user is authenticated else no
   useEffect(() => {
@@ -29,6 +32,14 @@ export default function AuthContextProvider({ children }) {
       
     }
   }, []);
+
+  useEffect(() => {
+    console.log("Auth state changed:", isAuthenticated);
+    if(!isAuthenticated){
+      queryClient.clear();
+
+    }
+  }, [isAuthenticated]);
 
   //while state is null means getting accesstoken and check it remain null which shows the loader
   if (isAuthenticated === null) {

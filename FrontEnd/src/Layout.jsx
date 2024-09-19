@@ -12,7 +12,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
-import { useQuery,useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useResetRecoilState } from "recoil";
 import { paginationState, tableDataState, totalRows } from "./Store/TableData";
 import { customerDataFamily } from "./Store/CustomerData";
@@ -26,7 +26,6 @@ const pages = [
 ];
 
 const Layout = () => {
-  const queryClient = useQueryClient()
   const resettable = useResetRecoilState(tableDataState);
   const resetpagination = useResetRecoilState(paginationState);
   const resettotalRows = useResetRecoilState(totalRows);
@@ -37,6 +36,7 @@ const Layout = () => {
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useAuthContext();
+  console.log(useAuthContext().setIsAuthenticated)
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["User Info Api"],
     queryFn: async () => {
@@ -55,10 +55,10 @@ const Layout = () => {
         return response.data.data;
       }
     },
-    refetchOnMount:false,
-    refetchOnWindowFocus:false
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: isAuthenticated,
     // ,staleTime: 1800000,
-    
   });
 
   // handle side bar for upto md screens
@@ -75,20 +75,30 @@ const Layout = () => {
       const res = await Axios({ requestType: "get", url: "/logout-user" });
       if (res.status == 200) {
         localStorage.clear();
-        setIsAuthenticated(()=>{
-          return false
-        });
-        navigate("/Sign-in", { replace: true });  
+        setIsAuthenticated(false);
+        navigate("/Sign-in", { replace: true });
         resetuserimage();
         resetcustomerdata();
         resettotalRows();
         resettable();
         resetpagination();
+        // location.reload(true)
+        // location.reload()
+        // queryCache.clear()
+        // await queryClient.invalidateQueries();
       }
     } catch (error) {
       console.log(error.message);
     }
   }
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // Redirect or show a message
+      console.log("User is not authenticated.");
+    }
+  }, [isAuthenticated]);
+
   // when user click on avatar shows menu of logout/changepassword top right
   function handleUserMenu() {
     setUserMenu(!userMenu);
