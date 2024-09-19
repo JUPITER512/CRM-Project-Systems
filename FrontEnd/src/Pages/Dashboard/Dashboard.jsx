@@ -1,17 +1,17 @@
 import AnimatePage from "@components/AnimatePage";
-import {
-  useRecoilStateLoadable,
-} from "recoil";
+import { useRecoilStateLoadable } from "recoil";
 import Axios from "@hooks/Axios";
 import { customerDataFamily } from "../../Store/CustomerData";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthContext } from "@context/Auth";
 const Dashboard = () => {
+  const { isAuthenticated } = useAuthContext();
   // using loadable state to get the state phase isloading or have content or cause an error
-  const [customerData, setCustomerData] = useRecoilStateLoadable(customerDataFamily);
-
+  const [customerData, setCustomerData] =
+    useRecoilStateLoadable(customerDataFamily);
   // using useQuery of react query to eleminate uncessary states and useffect hooks
   const { isLoading, isError } = useQuery({
-    queryKey: ['customer_data'],
+    queryKey: ["customer_data"],
     queryFn: async () => {
       const response = await Axios({
         requestType: "get",
@@ -31,7 +31,9 @@ const Dashboard = () => {
       }
     },
     //means api should call or not it will only call on referesh when the customerstats recoil state is empty==0
-    enabled: customerData?.contents?.totalCustomers === 0,
+    enabled: isAuthenticated,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   if (customerData.state === "loading" || isLoading) {
@@ -41,7 +43,11 @@ const Dashboard = () => {
   if (customerData.state === "hasError" || isError) {
     return <div>Error loading data...</div>;
   }
-
+  console.log({
+    total: customerData?.contents?.totalCustomers,
+    isAuthenticated,
+  });
+  console.log(customerData?.contents?.totalCustomers === 0 && isAuthenticated);
   // destructuring the data from state.content
   const {
     totalCustomers,
@@ -50,7 +56,7 @@ const Dashboard = () => {
     females,
     havePhone,
     communicationPreferences,
-  } = customerData?.contents|| {};
+  } = customerData?.contents || {};
 
   // Ensure that calculated values are not less than 0
   const inactiveCount = Math.max(0, totalCustomers - activeCount);
@@ -58,54 +64,57 @@ const Dashboard = () => {
   return (
     <AnimatePage>
       <main className="bg-white dark:bg-gray-900 px-6 py-8 rounded-lg antialiased border-none">
-        <h1 className="text-center text-2xl md:text-4xl lg:text-4xl font-bold">Dashboard</h1>
-        <div className="bg-gray-400 dark:bg-gray-600 grid lg:grid-cols-2 gap-2 m-4 rounded-lg p-6 items-center justify-center">
-          <div className="bg-slate-500 dark:bg-slate-700 w-full rounded-lg p-4">
+        <h1 className="text-center text-3xl md:text-5xl lg:text-5xl font-bold text-gray-800 dark:text-gray-200">
+          Dashboard
+        </h1>
+        <div className="bg-gray-400 dark:bg-gray-600 grid lg:grid-cols-2 gap-4 m-4 rounded-lg p-6 items-center justify-center md:w-[80%] mx-auto shadow-lg">
+          <div className="bg-slate-600 dark:bg-slate-800 w-full rounded-lg p-4 hover:shadow-lg transition-shadow">
             <h1 className="text-xl font-semibold text-white dark:text-gray-200">
               Total Customers
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Total : {Math.max(0, totalCustomers)}
+              Total: {Math.max(0, totalCustomers)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              Remove : {localStorage.getItem('removedCustomers') || 0}
+              Remove: {localStorage.getItem("removedCustomers") || 0}
             </div>
           </div>
-          <div className="bg-slate-500 dark:bg-slate-700 w-full rounded-lg p-4">
+          <div className="bg-slate-600 dark:bg-slate-800 w-full rounded-lg p-4 hover:shadow-lg transition-shadow">
             <h1 className="text-xl font-semibold text-white dark:text-gray-200">
               Customer Status
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Active : {Math.max(0, activeCount)}
+              Active: {Math.max(0, activeCount)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              Inactive : {inactiveCount}
+              Inactive: {inactiveCount}
             </div>
           </div>
-          <div className="bg-slate-500 dark:bg-slate-700 w-full rounded-lg p-4">
+          <div className="bg-slate-600 dark:bg-slate-800 w-full rounded-lg p-4 hover:shadow-lg transition-shadow">
             <h1 className="text-xl font-semibold text-white dark:text-gray-200">
               Gender
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Males : {Math.max(0, males)}
+              Males: {Math.max(0, males)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              Females : {Math.max(0, females)}
+              Females: {Math.max(0, females)}
             </div>
           </div>
-          <div className="bg-slate-500 dark:bg-slate-700 w-full rounded-lg p-4">
-            <h1 className="text-xl font-semibold text-white text-center dark:text-gray-200">
-              Count of customers with a phone number
+          <div className="bg-slate-600 dark:bg-slate-800 w-full rounded-lg p-4 hover:shadow-lg transition-shadow">
+            <h1 className="text-xl font-semibold text-white dark:text-gray-200 text-center">
+              Count of Customers with a Phone Number
             </h1>
             <div className="text-white dark:text-gray-400 mt-2">
-              Yes : {Math.max(0, havePhone)}
+              Yes: {Math.max(0, havePhone)}
             </div>
             <div className="text-white dark:text-gray-400 mt-2">
-              No : {noPhoneCount}
+              No: {noPhoneCount}
             </div>
           </div>
         </div>
-        <div className="bg-slate-500 dark:bg-slate-700 w-3/4 mx-auto rounded-lg p-4 overflow-y-auto">
+
+        <div className="bg-slate-600 dark:bg-slate-800 lg:w-[60%] mx-auto rounded-lg p-4 overflow-y-auto shadow-lg">
           <h1 className="text-xl font-semibold text-white text-center dark:text-gray-200">
             Communication Preference
           </h1>
@@ -120,15 +129,13 @@ const Dashboard = () => {
                     <div className="w-2/3 bg-gray-300 dark:bg-gray-400 rounded-full overflow-hidden">
                       <div
                         className="bg-blue-800 text-xs font-medium text-white text-center p-0.5 leading-none"
-                        style={{ width: `${(totalCustomers > 0 ? (count / totalCustomers) * 100 : 0)}%` }}
-                        // preference,Count
-                        //i.e. email:10
-                        // communicationPreferences:{email:10,linkedIn:20}
-                        // totalCustomers==30
-                        // totalcustomers>0 true
-                        // email (10/30)*100 else 0
-                        // for email width of filled div is 33.33%
-                        // for linked (20/30)*100 ==66 the width of filled div is 66.67
+                        style={{
+                          width: `${
+                            totalCustomers > 0
+                              ? (count / totalCustomers) * 100
+                              : 0
+                          }%`,
+                        }}
                       >
                         {count}
                       </div>

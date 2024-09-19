@@ -24,6 +24,7 @@ const Query = () => {
       setTableData((prev) => {
         const previousData = [...prev];
         const newData = previousData.concat([...response.data.data]);
+        // const newData = [...previousData, ...response.data.data];
         const filteredData = newData.filter((item, index, array) => {
           return (
             array.findIndex((otherItem) => otherItem._id === item._id) === index
@@ -44,7 +45,6 @@ const Query = () => {
     refetchOnMount: false,
     placeholderData: keepPreviousData,
   });
-  console.log(tableData.length);
   return query;
 };
 

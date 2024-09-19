@@ -383,6 +383,34 @@ export const Refresh_Token = async (req, res) => {
   }
 };
 
+export const handleimagebase64=async(req,res)=>{
+  try {
+    const userId = req.user._id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID not given"
+      });
+    }
+    const userInDb = await User.findById(userId);
+    if (!userInDb.verify) {
+      return res.status(401).json({
+        message: "Email is not verified"
+      });
+    }
+    const {image}=req.body
+    userInDb.pictureBase64=image;
+    await userInDb.save()
+    res.status(200).json({
+      message: userInDb
+    });
+  }
+  catch(err){
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
+  }
+}
 export const handleImage = async (req, res) => {
   try {
     const userId = req.user._id;

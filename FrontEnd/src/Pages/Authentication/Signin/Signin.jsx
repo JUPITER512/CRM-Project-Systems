@@ -14,6 +14,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import notify from "../../../utils/ToasterFunction.js";
+import { ToastContainer } from "react-toastify";
 
 const schema = yup.object().shape({
   email: emailSchema.fields.email,
@@ -65,6 +66,7 @@ const Signin = () => {
   }
   return (
     <>
+    <ToastContainer/>
       <AuthenticationWrapper title={"Welcome Back To Crm Suite"}>
         <AnimatePage>
           <form

@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "./assets/logo.jpg";
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import ThemeSwitcher from "@components/ThemeSwitcher";
@@ -12,8 +12,8 @@ import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
-import {useQuery } from "@tanstack/react-query";
-import { useSetRecoilState } from "recoil";
+import { useQuery,useQueryClient } from "@tanstack/react-query";
+import { useResetRecoilState } from "recoil";
 import { paginationState, tableDataState, totalRows } from "./Store/TableData";
 import { customerDataFamily } from "./Store/CustomerData";
 import { userImageAtom } from "./Store/UserImage";
@@ -26,37 +26,40 @@ const pages = [
 ];
 
 const Layout = () => {
-  const resettable=useSetRecoilState(tableDataState)
-  const resetpagination=useSetRecoilState(paginationState)
- const resettotalRows= useSetRecoilState(totalRows)
- const resetcustomerdata= useSetRecoilState(customerDataFamily);
-  const resetuserimage=useSetRecoilState(userImageAtom)
+  const queryClient = useQueryClient()
+  const resettable = useResetRecoilState(tableDataState);
+  const resetpagination = useResetRecoilState(paginationState);
+  const resettotalRows = useResetRecoilState(totalRows);
+  const resetcustomerdata = useResetRecoilState(customerDataFamily);
+  const resetuserimage = useResetRecoilState(userImageAtom);
   const [sidebar, setSidebar] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
-  const { isAuthenticated,setIsAuthenticated } = useAuthContext();
-  const{data,isLoading,isError,error} =useQuery({
-    queryKey:["User Info Api"],
-    queryFn:async()=>{
-      const response =await Axios({
-        requestType:"get",
-        url:"/me"
-      })
-      if(response.status==200){
-        for(let [key,value] of Object.entries(response.data.data)){
-          if(key=='data' && typeof value === 'object'){
-              Object.assign(localStorage,value)
-            }else{
-              localStorage.setItem(key,value)
-            }
+  const { isAuthenticated, setIsAuthenticated } = useAuthContext();
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["User Info Api"],
+    queryFn: async () => {
+      const response = await Axios({
+        requestType: "get",
+        url: "/me",
+      });
+      if (response.status == 200) {
+        for (let [key, value] of Object.entries(response.data.data)) {
+          if (key == "data" && typeof value === "object") {
+            Object.assign(localStorage, value);
+          } else {
+            localStorage.setItem(key, value);
+          }
         }
-        return response.data.data
+        return response.data.data;
       }
     },
-    staleTime:1800000
-  })
- 
+    refetchOnMount:false,
+    refetchOnWindowFocus:false
+    // ,staleTime: 1800000,
+    
+  });
 
   // handle side bar for upto md screens
   function handleSidebar() {
@@ -67,21 +70,23 @@ const Layout = () => {
   }
 
   // logout handlers
- async function handleLogout() {
+  async function handleLogout() {
     try {
-      const res=await Axios({requestType:'get',url:'/logout-user'})
-      if(res.status==200){
-        navigate("/Sign-in", { replace: true });
-        setIsAuthenticated(false)
-        localStorage.clear()
-        resetuserimage()
-        resetcustomerdata()
-        resettotalRows()
+      const res = await Axios({ requestType: "get", url: "/logout-user" });
+      if (res.status == 200) {
+        localStorage.clear();
+        setIsAuthenticated(()=>{
+          return false
+        });
+        navigate("/Sign-in", { replace: true });  
+        resetuserimage();
+        resetcustomerdata();
+        resettotalRows();
         resettable();
         resetpagination();
       }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
   }
   // when user click on avatar shows menu of logout/changepassword top right
@@ -99,13 +104,15 @@ const Layout = () => {
     }
   }
   // if the user is not authenticate then he/she is not authenticated
-  useEffect(()=>{
-    if(!isAuthenticated){
-      navigate('/Sign-in')
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/Sign-in");
     }
-  },[])
-  if(isLoading){
-    return <div className="loader absolute left-[50%] top-[50%] translate-x-[-50%]"></div>
+  }, []);
+  if (isLoading) {
+    return (
+      <div className="loader absolute left-[50%] top-[50%] translate-x-[-50%]"></div>
+    );
   }
   return (
     <div className=" w-screen h-screen relative bg-[#e0e7e9] dark:bg-gradient-to-bl dark:bg-slate-400 transition-colors duration-200 ease-linear">
@@ -118,16 +125,16 @@ const Layout = () => {
         </button>
         <div className="flex items-center gap-4 ml-auto">
           <ThemeSwitcher />
-         <ButtonAnimation>
-         <img
-            src={ localStorage.getItem("picture") ||'/avatar.jpg'}
-            alt="avatar-logo"
-            className="cursor-pointer w-10 h-10 rounded-full border border-gray-300 dark:border-gray-700"
-            onClick={() => {
-              handleUserMenu();
-            }}/>
-         </ButtonAnimation>
-          
+          <ButtonAnimation>
+            <img
+              src={localStorage.getItem("pictureBase64") || "/avatar.jpg"}
+              alt="avatar-logo"
+              className="cursor-pointer w-10 h-10 rounded-full border border-gray-300 dark:border-gray-700"
+              onClick={() => {
+                handleUserMenu();
+              }}
+            />
+          </ButtonAnimation>
         </div>
         {userMenu && (
           <AnimatePage duration={0.3}>
@@ -158,7 +165,7 @@ const Layout = () => {
           sidebar ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-linear md:translate-x-0 md:w-[25%] lg:w-[20%] xl:w-[15%] absolute bg-gradient-to-l from-[#eafbf7] to-[#d2e5fe] h-full rounded-r-xl z-20 shadow-xl flex flex-col justify-between dark:from-[#1e293b] dark:to-[#334155] dark:bg-opacity-70`}
       >
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between gap-4 p-2">
           <Link
             id="logo"
             className="flex items-center gap-4"

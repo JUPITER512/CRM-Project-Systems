@@ -1,11 +1,11 @@
-import {v2 as cloudinary} from 'cloudinary';
-import fs  from "fs";
+// import {v2 as cloudinary} from 'cloudinary';
+// import fs  from "fs";
 
-cloudinary.config({
-    cloud_name:process.env.CLOUDINARY_Cloud_Name,
-    api_key:process.env.CLOUDINARY_API_KEY,
-    api_secret:process.env.CLOUDINARY_API_SECRET
-})
+// cloudinary.config({
+//     cloud_name:process.env.CLOUDINARY_Cloud_Name,
+//     api_key:process.env.CLOUDINARY_API_KEY,
+//     api_secret:process.env.CLOUDINARY_API_SECRET
+// })
 async function Cloudinary_Upload(filepath, public_id = null) {
     try {
       if (!filepath) {

@@ -1,12 +1,12 @@
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
-const FilterInput = ({ value, setValue }) => {
+const FilterInput = ({value, setValue }) => {
   const handleChange = (e) => {
     setValue(e.target.value);
   };
 
   const handleClear = () => {
-    setValue('');
+    setValue("");
   };
 
   return (
@@ -24,7 +24,7 @@ const FilterInput = ({ value, setValue }) => {
           aria-label="Clear search"
           className="ml-2 p-2 text-gray-600 hover:text-gray-800"
         >
-          <AiOutlineCloseCircle/>
+          <AiOutlineCloseCircle />
         </button>
       )}
     </div>

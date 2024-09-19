@@ -91,7 +91,7 @@
         notify({
           message:"Customer Added Successfully",
           position:'top-right',
-          autocloseTime:3000,
+          autocloseTime:1000,
           type:"success",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })

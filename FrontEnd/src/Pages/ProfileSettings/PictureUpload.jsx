@@ -2,6 +2,8 @@ import Axios from "@hooks/Axios";
 import { useRecoilState } from "recoil";
 import { userImageAtom } from "../../Store/UserImage";
 import notify from "../../utils/ToasterFunction";
+import { convertBase64 } from "./ConvertTOBase64";
+import { ToastContainer } from "react-toastify";
 const PictureUpload = () => {
   const [selectedFile, setSelectedFile] = useRecoilState(userImageAtom);
 
@@ -9,53 +11,56 @@ const PictureUpload = () => {
     e.preventDefault();
     try {
       if (selectedFile) {
-        const formData = new FormData();
-        formData.append("picture", selectedFile);
+        console.log(selectedFile);
         const res = await Axios({
           requestType: "put",
-          url: "/upload-image",
-          data: formData,
-          headers: { "Content-Type": "multipart/form-data" },
+          url: "/upload-image-base64",
+          data: { image: selectedFile },
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         if (res.status === 200) {
-          localStorage.setItem("picture", URL.createObjectURL(selectedFile));
+          // localStorage.setItem("picture", URL.createObjectURL(selectedFile));
           notify(`Image Uploaded Successfully`, {
-            position: 'top-right',
+            position: "top-right",
             autoClose: 3000,
-            theme: localStorage.getItem('theme') == 'false' ? 'light' : 'dark'
+            theme: localStorage.getItem("theme") == "false" ? "light" : "dark",
           });
-        } 
+        }
       }
     } catch (error) {
       notify(`Error While Uploading picture: ${error.message}`, {
-        position: 'top-right',
+        position: "top-right",
         autoClose: 3000,
-        theme: localStorage.getItem('theme') == 'false' ? 'light' : 'dark'
+        theme: localStorage.getItem("theme") == "false" ? "light" : "dark",
       });
     }
   }
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      localStorage.setItem("picture", URL.createObjectURL(file));
+    if (file && file.size <= 1 * 1024 * 1024) {//bytes*kb*mb 
+      console.log(file.size/1024,"KB ")
+      try {
+        const base64 = await convertBase64(file);
+        setSelectedFile(base64);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error('File size exceeds the limit');
     }
   }
 
   return (
     <div className="w-full max-w-md relative bg-gray-100 border border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center dark:bg-slate-400 dark:border-gray-600">
       <img
-        src={
-          selectedFile
-            ? URL.createObjectURL(selectedFile)
-            : localStorage.getItem("picture")
-            ? localStorage.getItem("picture")
-            : "/avatar.jpg"
-        }
+        src={selectedFile || localStorage.getItem("pictureBase64") || "/avatar.jpg"}
         alt="user-image"
         className="rounded-full h-24 w-24 bg-cover mb-4 border-2"
       />
+      <ToastContainer/>
       <form
         onSubmit={handleSubmit}
         className="w-full flex flex-col gap-4 items-center"

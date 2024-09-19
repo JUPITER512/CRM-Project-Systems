@@ -20,37 +20,27 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(err); 
   }
 );
-
-let apiCallSent=null;
+let isRefreshing = false; // Flag to indicate if a token refresh is in progress
+let queuedRequests = [];
 axiosInstance.interceptors.response.use(
   function (response) {
     return response;
   },
   async function (error) {
     const originalRequest = error.config;
-
     if (error?.response?.status === 401 && error?.response?.data?.message=='Invalid or expired token' && !originalRequest?._retry) {
       originalRequest._retry = true;
-
       try {
-        apiCallSent=true
-        if(apiCallSent){
-          const response = await axiosInstance.post("/update-access-token");
-          const { accessToken } = response.data;
-          localStorage.setItem("accessToken", accessToken);
-          axiosInstance.defaults.headers.Authorization = `${accessToken}`;;
-          return axiosInstance(originalRequest);
-        }
+        const response = await axiosInstance.post("/update-access-token");
+        const { accessToken } = response.data;
+        localStorage.setItem("accessToken", accessToken);
+        axiosInstance.defaults.headers.Authorization = `${accessToken}`;;
+        return axiosInstance(originalRequest);
       } catch (error) {
         window.location.href = "/Sign-in";
       }
-
-
     }
-
-    apiCallSent=false;
     return Promise.reject(error);
-
   }
 );
 const Axios = async ({ requestType, url, header, params, query, data }) => {
