@@ -6,6 +6,8 @@ import Axios from "@hooks/Axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { otpCode } from "../../../utils/inputValidations.js";
+import { ToastContainer } from "react-toastify";
+import notify from "../../../utils/ToasterFunction.js";
 const schema=yup.object().shape({
   otpcode:otpCode.fields.otp
 })
@@ -28,14 +30,31 @@ const Otp = () => {
         localStorage.removeItem("forgetPasswordEmail");
         localStorage.setItem("email", response.data.user.email);
         localStorage.setItem("id", response.data.user.id);
-        navigate("/Change-password", { replace: true });
+        notify({
+          type: "success",
+          message: "Otp Verified",
+          position: "top-right",
+          autocloseTime: 1000,
+          theme: localStorage.getItem("theme") == "false" ? "light" : "dark",
+        });
+        setTimeout(() => {
+          navigate("/Change-password", { replace: true });
+        }, 1200);
       }
     } catch (error) {
       console.log(error);
+      notify({
+        message:error.response.data.message,
+        position:'top-right',
+        autocloseTime:3000,
+        type:"error",
+        theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
+      })
     }
   }
   return (
     <>
+    <ToastContainer/>
       <AuthenticationWrapper title={"Welcome To CRM Suite Code Verifier"}>
         <AnimatePage>
           <form

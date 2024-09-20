@@ -47,7 +47,7 @@ const UpdateView = () => {
   const navigate = useNavigate();
   const localData = tabledata.find((item) => item._id === id);
   const setCustomerDataFamily = useSetRecoilState(customerDataFamily);
-  
+
   // implement usequery to fetch data
   const {
     data: customerData,
@@ -72,25 +72,45 @@ const UpdateView = () => {
   // if data in state exist then use it instead of data from api
   const formData = localData || customerData;
   // update customer stats when update hadnler call
-  const updateCustomerData = useCallback((data) => {
-    setCustomerDataFamily((prevData) => {
-
-        const { CommunicationPreferences: newPreferences, status: newStatus } = data.communicationStatus;
+  const updateCustomerData = useCallback(
+    (data) => {
+      setCustomerDataFamily((prevData) => {
+        const { CommunicationPreferences: newPreferences, status: newStatus } =
+          data.communicationStatus;
         const { gender: newGender } = data.basic;
-        
-        const prevPreferences  = formData.customerCommunicationPreference;
-        const prevStatus = formData.customerStatus;
-        const prevGender  = formData.gender;
 
-        const updatedMales = (newGender=='male'&& prevGender!='male') ? prevData.males+1 : (newGender!='male' && prevGender=='male')? prevData.males-1 : prevData.males
-        const updatedFemales = (newGender == 'female' && prevGender != 'female') ? prevData.females + 1 : (newGender !== 'female' && prevGender === 'female') ? prevData.females - 1 : prevData.females;
-        const updatedActiveCount = (newStatus == 'active' && prevStatus != 'active') ? prevData.activeCount + 1 : (newStatus !== 'active' && prevStatus === 'active') ? prevData.activeCount - 1 : prevData.activeCount;
-        const updatedCommunicationPreferences = newPreferences != prevPreferences 
-          ? { ...prevData.communicationPreferences, 
-                [newPreferences]:(prevData.communicationPreferences[newPreferences] || 0)+1,
-              [prevPreferences]:prevData.communicationPreferences[prevPreferences]-1,
-          }
-          : prevData.communicationPreferences;
+        const prevPreferences = formData.customerCommunicationPreference;
+        const prevStatus = formData.customerStatus;
+        const prevGender = formData.gender;
+
+        const updatedMales =
+          newGender == "male" && prevGender != "male"
+            ? prevData.males + 1
+            : newGender != "male" && prevGender == "male"
+            ? prevData.males - 1
+            : prevData.males;
+        const updatedFemales =
+          newGender == "female" && prevGender != "female"
+            ? prevData.females + 1
+            : newGender !== "female" && prevGender === "female"
+            ? prevData.females - 1
+            : prevData.females;
+        const updatedActiveCount =
+          newStatus == "active" && prevStatus != "active"
+            ? prevData.activeCount + 1
+            : newStatus !== "active" && prevStatus === "active"
+            ? prevData.activeCount - 1
+            : prevData.activeCount;
+        const updatedCommunicationPreferences =
+          newPreferences != prevPreferences
+            ? {
+                ...prevData.communicationPreferences,
+                [newPreferences]:
+                  (prevData.communicationPreferences[newPreferences] || 0) + 1,
+                [prevPreferences]:
+                  prevData.communicationPreferences[prevPreferences] - 1,
+              }
+            : prevData.communicationPreferences;
         return {
           ...prevData,
           totalCustomers: prevData.totalCustomers,
@@ -100,48 +120,48 @@ const UpdateView = () => {
           activeCount: updatedActiveCount,
           communicationPreferences: updatedCommunicationPreferences,
         };
-      })
-  }, [formData]);
-
-
+      });
+    },
+    [formData]
+  );
 
   // initalizin form
   const form = useForm({
     defaultValues: {
-          basic: {
-            Name: formData?.fullName || "",
-            email: formData?.email || "",
-            gender: formData?.gender || "",
-            dob: formatDateForInput(formData?.dob) || "",
-            primaryPhone: formData?.primaryPhone || "",
-            alternativePhone: formData?.alternativePhone || "",
-          },
-          address: {
-            address1: formData?.address?.address1 || "",
-            address2: formData?.address?.address2 || "",
-            city: formData?.address?.city || "",
-            state: formData?.address?.state || "",
-            country: formData?.address?.country || "",
-            zipCode: formData?.address?.zipCode || "",
-          },
-          communicationStatus: {
-            CommunicationPreferences:
-              formData?.customerCommunicationPreference || "",
-            status: formData?.customerStatus || "",
-          },
-          company: {
-            name: formData?.customerCompanyName || "",
-            JobTitle: formData?.customerJobTitle || "",
-          },
-          Additional: {
-            Notes: formData?.additionalInfoNote || "",
-            SourceofLead: formData?.additionalInfoSourceOfLead || "",
-          },
-        },
+      basic: {
+        Name: formData?.fullName || "",
+        email: formData?.email || "",
+        gender: formData?.gender || "",
+        dob: formatDateForInput(formData?.dob) || "",
+        primaryPhone: formData?.primaryPhone || "",
+        alternativePhone: formData?.alternativePhone || "",
+      },
+      address: {
+        address1: formData?.address?.address1 || "",
+        address2: formData?.address?.address2 || "",
+        city: formData?.address?.city || "",
+        state: formData?.address?.state || "",
+        country: formData?.address?.country || "",
+        zipCode: formData?.address?.zipCode || "",
+      },
+      communicationStatus: {
+        CommunicationPreferences:
+          formData?.customerCommunicationPreference || "",
+        status: formData?.customerStatus || "",
+      },
+      company: {
+        name: formData?.customerCompanyName || "",
+        JobTitle: formData?.customerJobTitle || "",
+      },
+      Additional: {
+        Notes: formData?.additionalInfoNote || "",
+        SourceofLead: formData?.additionalInfoSourceOfLead || "",
+      },
+    },
     resolver: yupResolver(schema),
   });
   //destructuring form
-  const { register, handleSubmit, formState, getValues,control ,reset} = form;
+  const { register, handleSubmit, formState, getValues, control, reset } = form;
   const { errors, isValid, isSubmitting, isDirty } = formState;
   //form submit handler
   const onSubmit = async (data) => {
@@ -165,19 +185,23 @@ const UpdateView = () => {
         notify({
           message: "Customer Information Updated Successfully",
           position: "top-right",
-          autocloseTime: 3000,
+          autocloseTime: 1000,
           type: "success",
           theme: `${
             localStorage.getItem("theme") == "false" ? "light" : "dark"
           }`,
+          
         });
-        navigate("/home/CustomerList");
+        setTimeout(() => {
+          navigate("/home/CustomerList");
+
+        }, 1000);
       }
     } catch (error) {
       notify({
         message: ` ${error?.response?.data?.message}`,
         position: "top-right",
-        autocloseTime: 3000,
+        autocloseTime: 1000,
         type: "error",
         theme: `${localStorage.getItem("theme") == "false" ? "light" : "dark"}`,
       });
@@ -222,10 +246,7 @@ const UpdateView = () => {
   }, [customerData]);
   const isViewModelOnly = path.includes("View");
   if (isLoading) {
-    return (
-      <div className="loader absolute left-[50%] top-[50]">
-      </div>
-    );
+    return <div className="loader absolute left-[50%] top-[50]"></div>;
   }
   if (isError) {
     return (
@@ -236,30 +257,33 @@ const UpdateView = () => {
   }
 
   return (
-    <AnimatePage>
+    <>
       <ToastContainer />
-      {path && (
-        <h1 className="text-center font-bold text-2xl py-1">
-          {isViewModelOnly
-            ? "View Customer Data"
-            : "Update Customer Information"}
-        </h1>
-      )}
-      {!isLoading && !error && formData && (
-        <CustomerForm
-          today={today}
-          onSubmit={onSubmit}
-          handleSubmit={handleSubmit}
-          path={path}
-          register={register}
-          errors={errors}
-          isViewModelOnly={isViewModelOnly}
-          isValid={!isValid}
-          isSubmitting={isSubmitting}
-          isDirty={!isDirty}
-        />
-      )}
-    </AnimatePage>
+
+      <AnimatePage>
+        {path && (
+          <h1 className="text-center font-bold text-2xl py-1">
+            {isViewModelOnly
+              ? "View Customer Data"
+              : "Update Customer Information"}
+          </h1>
+        )}
+        {!isLoading && !error && formData && (
+          <CustomerForm
+            today={today}
+            onSubmit={onSubmit}
+            handleSubmit={handleSubmit}
+            path={path}
+            register={register}
+            errors={errors}
+            isViewModelOnly={isViewModelOnly}
+            isValid={!isValid}
+            isSubmitting={isSubmitting}
+            isDirty={!isDirty}
+          />
+        )}
+      </AnimatePage>
+    </>
   );
 };
 

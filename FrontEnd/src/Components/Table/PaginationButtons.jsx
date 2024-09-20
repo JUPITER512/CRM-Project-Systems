@@ -1,4 +1,4 @@
-const PaginationButtons = ({ tableInstance }) => {
+const PaginationButtons = ({ tableInstance ,setFilter }) => {
   const {
     getState,
     setPageIndex,
@@ -36,7 +36,10 @@ const PaginationButtons = ({ tableInstance }) => {
 
         <button
           disabled={!getCanPreviousPage()}
-          onClick={previousPage}
+          onClick={()=>{
+            previousPage();
+            setFilter('')
+          }}
           className={`px-4 py-2 rounded-lg shadow-md transition-colors duration-150 ease-in-out text-sm sm:text-base ${
             getCanPreviousPage()
               ? "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
@@ -57,7 +60,10 @@ const PaginationButtons = ({ tableInstance }) => {
       <div className="flex items-center justify-center gap-2">
         <button
           disabled={!getCanNextPage()}
-          onClick={() => nextPage()}
+          onClick={() =>{
+            nextPage()
+            setFilter('')
+          }}
           className={`px-4 py-2 rounded-lg shadow-md transition-colors duration-150 ease-in-out text-sm sm:text-base ${
             getCanNextPage()
               ? "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"

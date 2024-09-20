@@ -7,7 +7,7 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { Columns } from "./Columns";
-import {  useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PaginationButtons from "./PaginationButtons";
 import FilterInput from "./FilterInput";
 import Query from "./FetchtableData";
@@ -19,58 +19,58 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ToastContainer } from "react-toastify";
 const Table = () => {
-    const { isLoading, isError, error } = Query();
-    const totalRowsValue = useRecoilValue(totalRows);
-    const tabledata = useRecoilValue(tableDataState);
-    
-    const [pagination, setPagination] = useRecoilState(paginationState);
-    const memoizedColumns = useMemo(() => Columns, []);
+  const { isLoading, isError, error,isFetching } = Query();
+  const [totalRowsValue, setrows] = useRecoilState(totalRows);
+  const tabledata = useRecoilValue(tableDataState);
 
-    const [sorting, setSorting] = useState([]);
-    // console.log("Sorting", sorting);
-    const [filter, setFilter] = useState("");
- 
+  const [pagination, setPagination] = useRecoilState(paginationState);
+  const memoizedColumns = useMemo(() => Columns, []);
 
-    const filteredData = useMemo(() => {
-      return tabledata;
-    }, [tabledata]);
-    const tableInstance = useReactTable({
-      columns: memoizedColumns, 
-      data: filteredData, 
+  const [sorting, setSorting] = useState([]);
+  // console.log("Sorting", sorting);
+  const [filter, setFilter] = useState("");
 
-      getCoreRowModel: getCoreRowModel(), //This function is used to get the basic row structure for the table.
-      getPaginationRowModel: getPaginationRowModel(), //This function handles the pagination
-      getSortedRowModel: getSortedRowModel(), // This function manages the sorting of rows based on the column headers.
-      getFilteredRowModel: getFilteredRowModel(), //  This function manages the filtering of rows based filter state
+  const tableInstance = useReactTable({
+    columns: memoizedColumns,
+    data: tabledata,
 
-      state: {
-        sorting, //sorting state
-        globalFilter: filter, // Global filter state
-        pagination, // Pagination state
-      },
+    getCoreRowModel: getCoreRowModel(), //This function is used to get the basic row structure for the table.
+    getPaginationRowModel: getPaginationRowModel(), //This function handles the pagination
+    getSortedRowModel: getSortedRowModel(), // This function manages the sorting of rows based on the column headers.
+    getFilteredRowModel: getFilteredRowModel(), //  This function manages the filtering of rows based filter state
 
-      onSortingChange: setSorting, // function for sorting changes
-      onGlobalFilterChange: setFilter, // function for global filter changes
-      rowCount: totalRowsValue, // Total number of rows of data
-      onPaginationChange: setPagination, // function for pagination changes
-      globalFilterFn:'includesString',
-      autoResetPageIndex: false, // Prevent resetting page index on state changes
-      
-    });
+    state: {
+      sorting, //sorting state
+      globalFilter: filter, // Global filter state
+      pagination, // Pagination state
+    },
 
-    // console.log("Filter staet", filter);
-    // console.log(tabledata)
+    onSortingChange: setSorting, // function for sorting changes
+    onGlobalFilterChange: setFilter, // function for global filter changes
+    rowCount: totalRowsValue, // Total number of rows of data
+    onPaginationChange: setPagination, // function for pagination changes
+    globalFilterFn: "includesString",
+    enableGlobalFilter: true,
+    autoResetPageIndex: filter != "", // Prevent resetting page index on state changes and only reset when there is some filter value
+  });
+
+  // console.log("Filter staet", filter);
+  // console.log(tabledata)
   // console.log(tableInstance.getRowModel());
   // console.log("headers row", tableInstance.getHeaderGroups()[0].headers);
   // console.log("data rows", tableInstance.getRowModel().rows);
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
       <div className=" bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-2">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
             Customer Data Table
           </h1>
-          <FilterInput tableInstance={tableInstance} value={filter} setValue={setFilter} />
+          <FilterInput
+            tableInstance={tableInstance}
+            value={filter}
+            setValue={setFilter}
+          />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full bg-white border border-gray-200 shadow-md divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700">
@@ -109,9 +109,11 @@ const Table = () => {
   if (isError) {
     return <div>Error {error.message}</div>;
   }
-  console.log("Table data" ,tabledata);
-  console.log("Table data length ",tabledata.length)
-  console.log(tableInstance.getState().globalFilter)
+  // console.log("Table data" ,tabledata);
+  // console.log("Table data length ",tabledata.length)
+  // console.log(tableInstance.getState().globalFilter)
+  // console.log(tableInstance.getHeaderGroups()[0].headers[0].column);
+  // console.log(tabledata)
   return (
     <>
       <ToastContainer />
@@ -120,7 +122,7 @@ const Table = () => {
           <h1 className="text-xl text-center lg:text-left font-semibold text-gray-800 dark:text-gray-200">
             Customer Data Table
           </h1>
-          <FilterInput value={filter} setValue={setFilter}/>
+          <FilterInput value={filter} setValue={setFilter} />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full bg-white border border-gray-200 shadow-md divide-y divide-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700">
@@ -134,11 +136,12 @@ const Table = () => {
                       className="p-6 text-center text-sm font-medium uppercase tracking-wider cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
                       {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {
-                          {asc: ' 🔼',desc: ' 🔽',}[header.column.getIsSorted()] ?? null }
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {{ asc: " 🔼", desc: " 🔽" }[
+                        header.column.getIsSorted()
+                      ] ?? null}
                     </th>
                   ))}
                 </tr>
@@ -157,7 +160,7 @@ const Table = () => {
                         className="p-6 text-sm border-b border-gray-200 dark:border-gray-700"
                       >
                         {flexRender(
-                        cell.column.columnDef.cell,
+                          cell.column.columnDef.cell,
                           cell.getContext()
                         )}
                       </td>
@@ -179,7 +182,10 @@ const Table = () => {
         </div>
       </div>
       <div className="p-4 flex justify-center lg:justify-end bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
-        <PaginationButtons tableInstance={tableInstance} />
+        <PaginationButtons
+          setFilter={setFilter}
+          tableInstance={tableInstance}
+        />
       </div>
     </>
   );

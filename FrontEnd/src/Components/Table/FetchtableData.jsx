@@ -11,7 +11,7 @@ const Query = () => {
 
   const pagination = useRecoilValue(paginationState);
   const [tableData, setTableData] = useRecoilState(tableDataState);
-  const setTotalRows = useSetRecoilState(totalRows);
+  const [totarows,setTotalRows] = useRecoilState(totalRows);
   const fetchTableData = async () => {
     const response = await Axios({
       requestType: "get",
@@ -41,7 +41,7 @@ const Query = () => {
     queryKey: ["tabledata", pagination?.pageIndex + 1, pagination?.pageSize],
     queryFn: fetchTableData,
     staleTime: 1800000,
-    enabled: true,
+    enabled: tableData.length==0 || tableData.length!=totarows,
     refetchOnMount: false,
     placeholderData: keepPreviousData,
   });

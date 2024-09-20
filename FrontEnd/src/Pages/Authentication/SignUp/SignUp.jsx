@@ -77,6 +77,7 @@ const SignUp = () => {
 
   return (
     <>
+    <ToastContainer/>
       <AuthenticationWrapper title={"Welcome To CRM Suite"}>
         <AnimatePage>
           <form

@@ -20,8 +20,7 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(err); 
   }
 );
-let isRefreshing = false; // Flag to indicate if a token refresh is in progress
-let queuedRequests = [];
+
 axiosInstance.interceptors.response.use(
   function (response) {
     return response;

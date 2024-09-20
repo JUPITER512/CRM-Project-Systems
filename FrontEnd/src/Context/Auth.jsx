@@ -19,7 +19,7 @@ export default function AuthContextProvider({ children }) {
   const queryClient = useQueryClient();
 
 
-  //it will call to get accessToken if access token exist then user is authenticated else no
+  //to get accessToken if access token exist then user is authenticated else no
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     try {

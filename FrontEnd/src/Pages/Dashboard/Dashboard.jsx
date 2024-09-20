@@ -31,7 +31,7 @@ const Dashboard = () => {
       }
     },
     //means api should call or not it will only call on referesh when the customerstats recoil state is empty==0
-    enabled: isAuthenticated,
+    enabled: customerData?.contents?.totalCustomers==0,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });

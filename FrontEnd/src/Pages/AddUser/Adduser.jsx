@@ -23,7 +23,7 @@
     })
   });
   const today = new Date().toISOString().split("T")[0];
-
+  // (YYYY-MM-DDTHH:mm:ss.sssZ or ±YYYYYY-MM-DDTHH:mm:ss.sssZ
   const Adduser = () => {
     const setTableState=useSetRecoilState(tableDataState);
     const [customerData,setCustomerData]=useRecoilState(customerDataFamily);

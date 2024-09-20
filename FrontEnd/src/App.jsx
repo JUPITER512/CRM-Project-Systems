@@ -15,7 +15,6 @@ import AuthContextProvider from "@context/Auth";
 import ProtectedRoute from "@hooks/ProtectedRoute";
 import UpdateView from "@components/Table/Updateview";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import RouteToDashboard from "@hooks/RouteToDashboard";
 
 const router = createBrowserRouter([
@@ -117,7 +116,6 @@ export default function App() {
   return (
     <AuthContextProvider>
       <RouterProvider router={router} />
-      <ToastContainer />
     </AuthContextProvider>
   );
 }

@@ -12,11 +12,12 @@ import { AiOutlineLogout } from "react-icons/ai";
 import AnimatePage from "@components/AnimatePage";
 import ButtonAnimation from "@components/ButtonAnimation";
 import Axios from "@hooks/Axios";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useResetRecoilState } from "recoil";
+import { useQuery } from "@tanstack/react-query";
+import { useRecoilValue, useResetRecoilState } from "recoil";
 import { paginationState, tableDataState, totalRows } from "./Store/TableData";
 import { customerDataFamily } from "./Store/CustomerData";
 import { userImageAtom } from "./Store/UserImage";
+
 
 const pages = [
   { page: "Dashboard", id: 1, icon: <MdSpaceDashboard /> },
@@ -31,12 +32,14 @@ const Layout = () => {
   const resettotalRows = useResetRecoilState(totalRows);
   const resetcustomerdata = useResetRecoilState(customerDataFamily);
   const resetuserimage = useResetRecoilState(userImageAtom);
+  const userimage = useRecoilValue(userImageAtom);
+ 
   const [sidebar, setSidebar] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useAuthContext();
-  console.log(useAuthContext().setIsAuthenticated)
+ 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["User Info Api"],
     queryFn: async () => {
@@ -137,7 +140,7 @@ const Layout = () => {
           <ThemeSwitcher />
           <ButtonAnimation>
             <img
-              src={localStorage.getItem("pictureBase64") || "/avatar.jpg"}
+              src={userimage || localStorage.getItem("pictureBase64") || "/avatar.jpg"}
               alt="avatar-logo"
               className="cursor-pointer w-10 h-10 rounded-full border border-gray-300 dark:border-gray-700"
               onClick={() => {

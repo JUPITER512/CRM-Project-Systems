@@ -14,6 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { passwordSchema } from "../../../utils/inputValidations.js";
 import notify from "../../../utils/ToasterFunction.js";
+import { ToastContainer } from "react-toastify";
 
 
 const schema=yup.object().shape({
@@ -83,6 +84,7 @@ const NewPassword = () => {
   }
   return (
     <>
+    <ToastContainer/>
       <AuthenticationWrapper
         title={"Welcome Back To CRM Suite Password Changer"}
       >
