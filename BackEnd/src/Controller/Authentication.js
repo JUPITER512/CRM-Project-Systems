@@ -270,7 +270,7 @@ export const Change_Password = async (req, res) => {
     const isOldPassword = await findedUser.isPasswordCorrect(password);
     if (isOldPassword) {
       return res.status(400).json({
-        message: "You cannot use your old password as the new password"
+        message: "Maybe you are trying to set old password"
       });
     }
 
@@ -562,7 +562,7 @@ export const Change_Password_FromProfile=async(req,res)=>{
     const isOldPassword = await userInDb.isPasswordCorrect(newPassword);
     if (isOldPassword) {
       return res.status(400).json({
-        message: "You cannot use your old password as the new password"
+        message: "Maybe you are trying to set old password"
       });
     }
     userInDb.password = newPassword;
