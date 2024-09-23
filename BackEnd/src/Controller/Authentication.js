@@ -267,6 +267,12 @@ export const Change_Password = async (req, res) => {
         message: "Email Not Verified",
       });
     }
+    const isOldPassword = await findedUser.isPasswordCorrect(password);
+    if (isOldPassword) {
+      return res.status(400).json({
+        message: "You cannot use your old password as the new password"
+      });
+    }
 
     findedUser.password = password;
     findedUser.save();
@@ -551,6 +557,12 @@ export const Change_Password_FromProfile=async(req,res)=>{
     if (!currentPasswordStatus) {
       return res.status(400).json({
         message: "Current password is incorrect"
+      });
+    }
+    const isOldPassword = await userInDb.isPasswordCorrect(newPassword);
+    if (isOldPassword) {
+      return res.status(400).json({
+        message: "You cannot use your old password as the new password"
       });
     }
     userInDb.password = newPassword;
