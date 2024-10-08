@@ -15,7 +15,6 @@
     basic: yup.object().shape({
       Name: nameSchema.fields.name,
       email: emailSchema.fields.email,
-      primaryPhone: phoneNumberSchema.fields.phoneNumber,
       dob: dobSchema.fields.dob
     }),
     communicationStatus: yup.object().shape({
@@ -23,7 +22,7 @@
     })
   });
   const today = new Date().toISOString().split("T")[0];
-  // (YYYY-MM-DDTHH:mm:ss.sssZ or ±YYYYYY-MM-DDTHH:mm:ss.sssZ
+  // (YYYY-MM-DDTHH:mm:ss.sssZ
   const Adduser = () => {
     const setTableState=useSetRecoilState(tableDataState);
     const [customerData,setCustomerData]=useRecoilState(customerDataFamily);
@@ -61,7 +60,7 @@
       },
       resolver: yupResolver(schema)
     });
-  const { register, handleSubmit, formState,control,reset} = form;
+  const { register, handleSubmit, formState,reset} = form;
   const { errors ,isValid,isSubmitting,isDirty} = formState;
   const onSubmit = async (data) => {
     try {

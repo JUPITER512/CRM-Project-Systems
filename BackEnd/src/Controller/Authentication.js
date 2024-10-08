@@ -3,7 +3,6 @@ import { User } from "../Models/User.model.js";
 import { generateOTP } from "../Utils/GenerateOtp.js";
 import { sendmail } from "../Utils/NodeMailer.js";
 import Cloudinary_Upload from "../Utils/Cloudinary.js";
-import fs from 'fs';
 import { Customer } from "../Models/CustomerBasicInfo.model.js";
 
 export const EmailVerification=async(req,res)=>{
@@ -121,7 +120,7 @@ export const Sign_in = async (req, res) => {
     if(!userInDb.refreshToken){
       const refreshToken=userInDb.generateRefershToken();
       userInDb.refreshToken = refreshToken;
-      userInDb.save()
+      await userInDb.save()
     }
     const options = {
       httpOnly: true,

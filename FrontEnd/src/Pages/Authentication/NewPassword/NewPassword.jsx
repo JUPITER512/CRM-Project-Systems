@@ -64,19 +64,19 @@ const NewPassword = () => {
         notify({
           message:"You will redirect to Sign In Page shortly",
           position:'top-right',
-          autocloseTime:3000,
+          autocloseTime:2000,
           type:"info",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
         setTimeout(() => {
           navigate("/Sign-In", { replace: true });
-        }, 3300);
+        }, 2300);
       }
     } catch (error) {
       notify({
         message:error.response.data.message,
         position:'top-right',
-        autocloseTime:3000,
+        autocloseTime:2000,
         type:"error",
         theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
       })

@@ -4,6 +4,7 @@ import { userImageAtom } from "../../Store/UserImage";
 import notify from "../../utils/ToasterFunction";
 import { convertBase64 } from "./ConvertTOBase64";
 import { ToastContainer } from "react-toastify";
+import { useEffect } from "react";
 const PictureUpload = () => {
   const [selectedFile, setSelectedFile] = useRecoilState(userImageAtom);
 
@@ -55,6 +56,12 @@ const PictureUpload = () => {
       console.error("File size exceeds the limit");
     }
   }
+
+  useEffect(()=>{
+    return ()=>{
+      setSelectedFile('')
+    }
+  },[])
 
   return (
     <>

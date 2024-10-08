@@ -121,12 +121,16 @@ const Dashboard = () => {
           <div className="mt-4">
             {communicationPreferences &&
               Object.entries(communicationPreferences).map(
-                ([preference, count]) => (
+                ([preference, count],index) => (
+                  
                   <div key={preference} className="flex items-center mb-2">
+                    
                     <div className="w-1/3 text-white dark:text-gray-300">
                       {preference}
                     </div>
+
                     <div className="w-2/3 bg-gray-300 dark:bg-gray-400 rounded-full overflow-hidden">
+                      
                       <div
                         className="bg-blue-800 text-xs font-medium text-white text-center p-0.5 leading-none"
                         style={{
@@ -139,7 +143,10 @@ const Dashboard = () => {
                       >
                         {count}
                       </div>
+                        
                     </div>
+
+
                   </div>
                 )
               )}

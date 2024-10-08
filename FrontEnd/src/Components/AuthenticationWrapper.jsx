@@ -8,7 +8,7 @@ const AuthenticationWrapper = ({ title, children }) => {
         src={darkBackground}
         alt="Background"
         className="object-cover w-full h-full absolute opacity-50 block md:hidden"
-      />
+      />  
       <section className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-200">
         <div className="grid gap-0 md:grid-cols-2 items-center justify-center relative ">
           <div className="absolute top-4 right-2 md:right-10 z-20">

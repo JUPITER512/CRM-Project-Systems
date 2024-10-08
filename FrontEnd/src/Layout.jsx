@@ -33,7 +33,6 @@ const Layout = () => {
   const resetcustomerdata = useResetRecoilState(customerDataFamily);
   const resetuserimage = useResetRecoilState(userImageAtom);
   const userimage = useRecoilValue(userImageAtom);
- 
   const [sidebar, setSidebar] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const path = useLocation().pathname.split("/")[2];
@@ -95,12 +94,6 @@ const Layout = () => {
     }
   }
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      // Redirect or show a message
-      console.log("User is not authenticated.");
-    }
-  }, [isAuthenticated]);
 
   // when user click on avatar shows menu of logout/changepassword top right
   function handleUserMenu() {
@@ -113,7 +106,7 @@ const Layout = () => {
       setSidebar(false);
     }
     if (userMenu) {
-      setUserMenu(!userMenu);
+      setUserMenu(false);
     }
   }
   // if the user is not authenticate then he/she is not authenticated
@@ -152,7 +145,7 @@ const Layout = () => {
         {userMenu && (
           <AnimatePage duration={0.3}>
             <div className="absolute right-0 top-16 px-6 z-50">
-              <ul className="border border-gray-300 rounded-lg flex flex-col text-left divide-y bg-white shadow-lg transition-colors duration-150 duration-150 ease-in-out ">
+              <ul className="border border-gray-300 rounded-lg flex flex-col text-left divide-y bg-white shadow-lg transition-colors duration-150 ease-in-out ">
                 <li
                   onClick={() => {
                     navigate("/Home/Change-Password");
@@ -183,6 +176,13 @@ const Layout = () => {
             id="logo"
             className="flex items-center gap-4"
             to={"/Home/Dashboard"}
+            onClick={()=>{
+              setSidebar(!sidebar);
+              if(userMenu){
+                setUserMenu(false)
+              }
+            
+            }}
           >
             <img src={logo} alt="logo-here" className="w-12 rounded-2xl" />
             <h1 className="text-xl font-bold dark:text-white">Crm Suite</h1>

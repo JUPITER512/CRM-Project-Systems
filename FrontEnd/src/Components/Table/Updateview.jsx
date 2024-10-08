@@ -33,7 +33,6 @@ const schema = yup.object().shape({
   basic: yup.object().shape({
     Name: nameSchema.fields.name,
     email: emailSchema.fields.email,
-    primaryPhone: phoneNumberSchema.fields.phoneNumber,
     dob: dobSchema.fields.dob,
   }),
   communicationStatus: yup.object().shape({

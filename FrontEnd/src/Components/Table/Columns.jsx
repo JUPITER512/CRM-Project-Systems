@@ -67,8 +67,8 @@ export const Columns = [
     id: "action",
     cell: (info) => {
       // get id of the row mongoDb object id
-      const [disable, setDisable] = useState(false);
       const id = info.row.original._id;
+      const [disable, setDisable] = useState(false);
       //setterFunction to alter the table
       const setTableDataState = useSetRecoilState(tableDataState);
       const [rows,setRows] = useRecoilState(totalRows);
@@ -89,28 +89,32 @@ export const Columns = [
             const currentCount = parseInt(removedCustomer) || 0;
             const newCount = currentCount + 1;
             localStorage.setItem("removedCustomers", newCount);
+            
             setCustomerData((prevData) => ({
               ...prevData,
-              totalCustomers: Math.max(prevData.totalCustomers - 1,0),
+              totalCustomers: Math.max(prevData.totalCustomers - 1, 0),
               activeCount:
                 info.row.original.customerStatus.toLowerCase() === "active"
-                  ? Math.max(prevData.activeCount - 1,0)
+                  ? Math.max(prevData.activeCount - 1, 0)
                   : prevData.activeCount,
-              males:
-                info.row.original.gender.toLowerCase() === "male" &&
-                Math.max(prevData.males - 1,0),
-              females:
-                info.row.original.gender.toLowerCase() === "female" &&
-                Math.max(prevData.females - 1,0),
-              havePhone: Math.max(prevData.havePhone - 1,0),
+
+              males: info.row.original.gender.toLowerCase() === "male"
+                ? Math.max(prevData.males - 1, 0)
+                : prevData.males,
+              females: info.row.original.gender.toLowerCase() === "female"
+                ? Math.max(prevData.females - 1, 0)
+                : prevData.females,
+
+              havePhone: Math.max(prevData.havePhone - 1, 0),
               communicationPreferences: {
                 ...prevData.communicationPreferences,
                 [info.row.original.customerCommunicationPreference.toLowerCase()]:
-                  (prevData.communicationPreferences[
-                    info.row.original.customerCommunicationPreference.toLowerCase()
-                  ] || 0) - 1,
+                  (prevData.communicationPreferences[info.row.original.customerCommunicationPreference.toLowerCase()] || 0) - 1,
               },
             }));
+
+            console.log('gender',info.row.original.gender)
+            
             setTableDataState((prev) => {
               const previousData = [...prev];
               const newData = previousData.filter((item) => {
@@ -120,12 +124,13 @@ export const Columns = [
               });
               return newData;
             });
+
             setRows((prev) => {
               const newTotalRows = prev - 1;
               return newTotalRows;
             });
-            console.log(rows <= pagination.pageIndex * pagination.pageSize);
-            console.log({rows ,paginationdata:pagination.pageIndex * pagination.pageSize})
+
+            // 20 <= 1*10
             if (rows <= pagination.pageIndex+1 * pagination.pageSize) {
               setPagination((prevPagination) => ({
                 ...prevPagination,

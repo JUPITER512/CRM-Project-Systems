@@ -22,6 +22,7 @@ MainRoute.get('/me_customer_info',verifyJsonWebToken,User_Customer_Information)
 MainRoute.put('/update-user-info',verifyJsonWebToken,Update_Info);
 MainRoute.put('/upload-image',verifyJsonWebToken,upload.single('picture'),handleImage);
 MainRoute.put('/upload-image-base64',verifyJsonWebToken,handleimagebase64);
+
 // MainRoute.put('/upload-image-base64',verifyJsonWebToken,express.json({ limit: '10mb' }),express.urlencoded({limit:'10mb', extended:true}),handleimagebase64);
 // MainRoute.patch('/update-image',verifyJsonWebToken,upload.single('picture'),handleImage)
 MainRoute.get('/logout-user',verifyJsonWebToken,Logout);

@@ -1,20 +1,26 @@
 import AnimatePage from "@components/AnimatePage";
 import Axios from "@hooks/Axios";
 import { useForm } from "react-hook-form";
+import { FaEyeSlash, FaEye } from "react-icons/fa6"; 
 import { useNavigate } from "react-router-dom";
 import notify from "../../utils/ToasterFunction";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { passwordSchema } from "../../utils/inputValidations.js";
 import { ToastContainer } from "react-toastify";
+import { useState } from "react";
 
 const schema = yup.object().shape({
   currentPassword: passwordSchema.fields.password,
   newPassword: passwordSchema.fields.password,
   confirmNewPassword: passwordSchema.fields.password,
 });
+
 const Changepassword = () => {
+  const [seeCurrentPassword, setSeeCurrentPassword] = useState(false);
+  const [seeNewPassword, setSeeNewPassword] = useState(false);
+  const [seeConfirmNewPassword, setSeeConfirmNewPassword] = useState(false);
+  
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
@@ -24,6 +30,7 @@ const Changepassword = () => {
     },
     resolver: yupResolver(schema),
   });
+  
   const { register, handleSubmit, formState, reset } = form;
   const { errors } = formState;
 
@@ -34,15 +41,13 @@ const Changepassword = () => {
         url: "/change-password-fromProfile",
         data: data,
       });
-      if (response.status == 200) {
+      if (response.status === 200) {
         notify({
           message: "Password Change Login Again",
           position: "top-right",
           autocloseTime: 2000,
           type: "success",
-          theme: `${
-            localStorage.getItem("theme") == "false" ? "light" : "dark"
-          }`,
+          theme: `${localStorage.getItem("theme") === "false" ? "light" : "dark"}`,
         });
         reset();
         setTimeout(() => {
@@ -57,7 +62,7 @@ const Changepassword = () => {
         position: "top-right",
         autocloseTime: 2000,
         type: "error",
-        theme: `${localStorage.getItem("theme") == "false" ? "light" : "dark"}`,
+        theme: `${localStorage.getItem("theme") === "false" ? "light" : "dark"}`,
       });
     }
   };
@@ -65,40 +70,40 @@ const Changepassword = () => {
   return (
     <>
       <ToastContainer />
-
       <AnimatePage>
         <div className="flex flex-col gap-4 justify-center items-center min-h-screen bg-gray-300 dark:bg-gray-900 rounded-lg px-4">
-          <h1 className="text-lg md:text-2xl font-bold  text-center">
-            Hi {localStorage.getItem("name")} You Can Cange Your Password Here
+          <h1 className="text-lg md:text-2xl font-bold text-center">
+            Hi {localStorage.getItem("name")}!
           </h1>
-          <div className="w-full max-w-md p-6 bg-white dark:bg-gray-800 shadow-md rounded-lg ">
+          <div className="w-full max-w-md p-6 bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg">
             <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-100">
               Change Your Password
             </h2>
-            <form
-              onSubmit={handleSubmit(handleChangePassword)}
-              className="space-y-4"
-            >
+            <form onSubmit={handleSubmit(handleChangePassword)} className="space-y-4">
               <div>
-                <label
-                  htmlFor="currentPassword"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Current Password
                 </label>
-                <input
-                  id="currentPassword"
-                  type="password"
-                  placeholder="Current Password"
-                  {...register("currentPassword", {
-                    required: "Current Password is required",
-                  })}
-                  className={` dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
-                    errors.currentPassword
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                />
+                <div className="relative">
+                  <input
+                    id="currentPassword"
+                    type={seeCurrentPassword ? "text" : "password"}
+                    placeholder="Current Password"
+                    {...register("currentPassword", {
+                      required: "Current Password is required",
+                    })}
+                    className={`dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
+                      errors.currentPassword ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSeeCurrentPassword(!seeCurrentPassword)}
+                    className="absolute right-2 top-2"
+                  >
+                    {seeCurrentPassword ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                </div>
                 {errors.currentPassword && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                     {errors.currentPassword.message}
@@ -106,24 +111,30 @@ const Changepassword = () => {
                 )}
               </div>
               <div>
-                <label
-                  htmlFor="newPassword"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   New Password
                 </label>
-                <input
-                  id="newPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="New Password"
-                  {...register("newPassword", {
-                    required: "New Password is required",
-                  })}
-                  className={` dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
-                    errors.newpassword ? "border-red-500" : "border-gray-300"
-                  } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                />
+                <div className="relative">
+                  <input
+                    id="newPassword"
+                    type={seeNewPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    placeholder="New Password"
+                    {...register("newPassword", {
+                      required: "New Password is required",
+                    })}
+                    className={`dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
+                      errors.newPassword ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSeeNewPassword(!seeNewPassword)}
+                    className="absolute right-2 top-2"
+                  >
+                    {seeNewPassword ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                </div>
                 {errors.newPassword && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                     {errors.newPassword.message}
@@ -131,26 +142,30 @@ const Changepassword = () => {
                 )}
               </div>
               <div>
-                <label
-                  htmlFor="confirmNewPassword"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Confirm New Password
                 </label>
-                <input
-                  id="confirmNewPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Confirm New Password"
-                  {...register("confirmNewPassword", {
-                    required: "Confirm New Password is required",
-                  })}
-                  className={` dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
-                    errors.confirmNewPassword
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                />
+                <div className="relative">
+                  <input
+                    id="confirmNewPassword"
+                    type={seeConfirmNewPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    placeholder="Confirm New Password"
+                    {...register("confirmNewPassword", {
+                      required: "Confirm New Password is required",
+                    })}
+                    className={`dark:text-black mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm ${
+                      errors.confirmNewPassword ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSeeConfirmNewPassword(!seeConfirmNewPassword)}
+                    className="absolute right-2 top-2"
+                  >
+                    {seeConfirmNewPassword ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                </div>
                 {errors.confirmNewPassword && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                     {errors.confirmNewPassword.message}
