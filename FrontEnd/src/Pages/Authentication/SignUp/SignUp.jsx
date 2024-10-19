@@ -58,16 +58,15 @@ const SignUp = () => {
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
         setTimeout(() => {
-          
           navigate("/Sign-In", { replace: true });
-        }, 4000);
+        }, 2000);
         reset();
       }
     } catch (error) {
       notify({
         message:error.response.data.message,
         position:'top-right',
-        autocloseTime:3000,
+        autocloseTime:1000,
         type:"error",
         theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
       })
@@ -77,6 +76,7 @@ const SignUp = () => {
 
   return (
     <>
+    <ToastContainer/>
       <AuthenticationWrapper title={"Welcome To CRM Suite"}>
         <AnimatePage>
           <form

@@ -4,7 +4,7 @@ import { FaRegMoon } from "react-icons/fa";
 
 const ThemeSwitcher = () => {
   const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem('theme');
     return savedTheme ? JSON.parse(savedTheme) : false;
   });
 

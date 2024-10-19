@@ -8,9 +8,10 @@ import {
 import Axios from "@hooks/Axios";
 
 const Query = () => {
+
   const pagination = useRecoilValue(paginationState);
   const [tableData, setTableData] = useRecoilState(tableDataState);
-  const setTotalRows = useSetRecoilState(totalRows);
+  const [totarows,setTotalRows] = useRecoilState(totalRows);
   const fetchTableData = async () => {
     const response = await Axios({
       requestType: "get",
@@ -19,9 +20,11 @@ const Query = () => {
       }`,
     });
     if (response.status === 200) {
+      
       setTableData((prev) => {
         const previousData = [...prev];
         const newData = previousData.concat([...response.data.data]);
+        // const newData = [...previousData, ...response.data.data];
         const filteredData = newData.filter((item, index, array) => {
           return (
             array.findIndex((otherItem) => otherItem._id === item._id) === index
@@ -35,14 +38,13 @@ const Query = () => {
     }
   };
   const query = useQuery({
-    queryKey: ["tabledata", pagination.pageIndex + 1, pagination.pageSize],
+    queryKey: ["tabledata", pagination?.pageIndex + 1, pagination?.pageSize],
     queryFn: fetchTableData,
     staleTime: 1800000,
-    enabled: true,
+    enabled: tableData.length==0 || tableData.length!=totarows,
     refetchOnMount: false,
     placeholderData: keepPreviousData,
   });
-  console.log(tableData.length);
   return query;
 };
 

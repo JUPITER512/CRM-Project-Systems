@@ -15,7 +15,6 @@
     basic: yup.object().shape({
       Name: nameSchema.fields.name,
       email: emailSchema.fields.email,
-      primaryPhone: phoneNumberSchema.fields.phoneNumber,
       dob: dobSchema.fields.dob
     }),
     communicationStatus: yup.object().shape({
@@ -23,7 +22,7 @@
     })
   });
   const today = new Date().toISOString().split("T")[0];
-
+  // (YYYY-MM-DDTHH:mm:ss.sssZ
   const Adduser = () => {
     const setTableState=useSetRecoilState(tableDataState);
     const [customerData,setCustomerData]=useRecoilState(customerDataFamily);
@@ -61,10 +60,8 @@
       },
       resolver: yupResolver(schema)
     });
-  console.log(tableRow)
-  const { register, handleSubmit, formState,} = form;
-  const { errors ,isValid,isSubmitting,isDirty,} = formState;
-  console.log(isValid,isSubmitting,isDirty)
+  const { register, handleSubmit, formState,reset} = form;
+  const { errors ,isValid,isSubmitting,isDirty} = formState;
   const onSubmit = async (data) => {
     try {
       const response = await Axios({
@@ -93,11 +90,11 @@
         notify({
           message:"Customer Added Successfully",
           position:'top-right',
-          autocloseTime:3000,
+          autocloseTime:1000,
           type:"success",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
-        // reset()
+        reset()
       } 
     } catch (err) {
       console.error("Error adding user:", err);
@@ -123,9 +120,9 @@
           handleSubmit={handleSubmit}
           register={register}
           errors={errors}
-          isValid
-          isSubmitting
-          isDirty
+          isValid={!isValid}
+          isSubmitting={isSubmitting}
+          isDirty={!isDirty}
         />
       </AnimatePage>
     </>

@@ -1,4 +1,5 @@
 import { Customer } from "../Models/CustomerBasicInfo.model.js";
+import { User } from "../Models/User.model.js";
 
   export const Add_Customer = async (req, res) => {
     try {
@@ -9,11 +10,12 @@ import { Customer } from "../Models/CustomerBasicInfo.model.js";
         communicationStatus,
         company
       } = req.body;
+
       if (!req.user || !req.user._id) {
         return res.status(400).json({ message: "User not authenticated" });
       }
       const manager_id = req.user._id;
-      const existingCustomer = await Customer.findOne({ email: basic?.email });
+      const existingCustomer = await Customer.findOne({ addedBy: manager_id, email: basic?.email });
       if (existingCustomer) {
         return res.status(400).json({
           message: "Customer with this email already exists",
@@ -54,6 +56,18 @@ export const Get_Customer = async (req, res) => {
     const page=parseInt(req.query.page) || 1;
     const limit=parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+
+    //for page 1 we need to skip 0 
+    // (page - 1) * limit 
+    // page 1 
+    //(1-1)*10
+    //(0)*0 == 0 
+    // so we need to skip zero element
+
+    // for page 4 and limit 40
+    // (4-1)*40
+    // (3)*40
+    // 120 == skipped means from start 0 index till 139 
     const customers = await Customer.find({
       addedBy:req.user._id
     })
@@ -64,7 +78,8 @@ export const Get_Customer = async (req, res) => {
       page,
       limit,
       totalCustomers,
-      totalPages: Math.ceil(totalCustomers / limit),
+      totalPages: Math.ceil(totalCustomers / limit),// math ceil i.e 0.5 to 1 or 1.2 to 2
+      // here math.ceil(30/20) math.ceil(1.5) ==> returns 2 means we have limit of 20 document on one page and other 10 will be on second page
       data: customers
     });
   } catch (error) {
@@ -117,6 +132,10 @@ export const Remove_customer = async (req, res) => {
         );
     }
     await Customer.deleteOne({ _id: find_customer._id });
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { $inc: { removedCustomers: 1 } },
+    );
     res.status(200).json({ message: `Customer with Email ${find_customer.email} deleted` });
 
   } catch (error) {

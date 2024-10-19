@@ -33,15 +33,14 @@ const customerSchema = new mongoose.Schema({
     dob: {
         type: Date,
         validate: {
-            validator: function(v) {
-                return v < new Date();
+            validator: function(date) {
+                return date < new Date();
             },
             message: 'Date of birth must be in the past.'
         }
     },
     email: {
         type: String,
-        unique: true,
         trim: true,
         lowercase: true,
         index: true,
@@ -62,15 +61,15 @@ const customerSchema = new mongoose.Schema({
     },
     additionalInfoNote: { type: String, trim: true },
     additionalInfoSourceOfLead: { type: String },
+   
 
 }, { timestamps: true });
+customerSchema.index({ addedBy: 1, email: 1 }, { unique: true });
 
 
 customerSchema.methods.totalCount = async function() {
     return await this.countDocuments();
 };
-customerSchema.methods.countByStatus = async function () {
-    return this.customerStatus
-};
+
 
 export  const Customer=mongoose.model("Customer",customerSchema);

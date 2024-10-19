@@ -14,6 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { passwordSchema } from "../../../utils/inputValidations.js";
 import notify from "../../../utils/ToasterFunction.js";
+import { ToastContainer } from "react-toastify";
 
 
 const schema=yup.object().shape({
@@ -63,19 +64,19 @@ const NewPassword = () => {
         notify({
           message:"You will redirect to Sign In Page shortly",
           position:'top-right',
-          autocloseTime:3000,
+          autocloseTime:2000,
           type:"info",
           theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
         })
         setTimeout(() => {
           navigate("/Sign-In", { replace: true });
-        }, 3300);
+        }, 2300);
       }
     } catch (error) {
       notify({
         message:error.response.data.message,
         position:'top-right',
-        autocloseTime:3000,
+        autocloseTime:2000,
         type:"error",
         theme:`${localStorage.getItem('theme')=='false'?"light":'dark'}`
       })
@@ -83,6 +84,7 @@ const NewPassword = () => {
   }
   return (
     <>
+    <ToastContainer/>
       <AuthenticationWrapper
         title={"Welcome Back To CRM Suite Password Changer"}
       >
