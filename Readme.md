@@ -4,6 +4,13 @@
 
 The CRM Suite is a comprehensive Customer Relationship Manager web application designed to help managers store, retrieve, and modify customer information efficiently. This suite includes both a frontend and backend component that work together to provide a robust solution for managing customer relationships and user authentication. Whether you need to manage your profile, handle customer data, or ensure secure access to the system, CRM Suite offers a complete set of features to meet your needs.
 
+## UI
+![Screenshot 2024-10-19 130734](https://github.com/user-attachments/assets/b5899a2e-9147-4bc9-bda8-23a454454b79)
+![Screenshot 2024-10-19 130836](https://github.com/user-attachments/assets/17d0c381-e4b4-4e37-97ab-8a76ee5dd587)
+![Screenshot 2024-10-19 131031](https://github.com/user-attachments/assets/f5125b66-1823-4cce-a91e-a8921fe6a967)
+![Screenshot 2024-10-19 131058](https://github.com/user-attachments/assets/6acd7bfb-c3a9-4da0-97a3-c6547182e235)
+
+
 ## Table of Contents
 
 1. [Frontend](#frontend)
