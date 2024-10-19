@@ -77,6 +77,9 @@ export const Columns = [
             setCustomerData(prevData => ({
               ...prevData,
               totalCustomers: prevData.totalCustomers - 1,
+              activeCount:prevData.activeCount-1,
+              males:prevData.activeCount-1,
+              females:prevData.females-1
             }));
             setTableDataState((prev) => {
               const previousData = [...prev];
