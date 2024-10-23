@@ -121,7 +121,7 @@ const Dashboard = () => {
           <div className="mt-4">
             {communicationPreferences &&
               Object.entries(communicationPreferences).map(
-                ([preference, count],index) => (
+                ([preference, count]) => (
                   
                   <div key={preference} className="flex items-center mb-2">
                     

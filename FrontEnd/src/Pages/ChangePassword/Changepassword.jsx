@@ -3,10 +3,10 @@ import Axios from "@hooks/Axios";
 import { useForm } from "react-hook-form";
 import { FaEyeSlash, FaEye } from "react-icons/fa6"; 
 import { useNavigate } from "react-router-dom";
-import notify from "../../utils/ToasterFunction";
+import notify from "@utils/ToasterFunction.js";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { passwordSchema } from "../../Utils/InputValidation.js";
+import { passwordSchema } from "@utils/InputValidation.js";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 

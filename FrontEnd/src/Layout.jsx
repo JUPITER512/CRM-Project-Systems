@@ -39,7 +39,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useAuthContext();
  
-  const { data, isLoading, isError, error } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["User Info Api"],
     queryFn: async () => {
       const response = await Axios({
@@ -114,7 +114,7 @@ const Layout = () => {
     if (!isAuthenticated) {
       navigate("/Sign-in");
     }
-  }, []);
+  });
   if (isLoading) {
     return (
       <div className="loader absolute left-[50%] top-[50%] translate-x-[-50%]"></div>

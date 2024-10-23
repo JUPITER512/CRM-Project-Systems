@@ -9,9 +9,9 @@ import {
   tableDataState,
   totalRows,
 } from "../../Store/TableData";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { customerDataFamily } from "../../Store/CustomerData";
-import notify from "../../utils/ToasterFunction";
+import notify from "@utils/ToasterFunction";
 import { useState } from "react";
 // columns for table
 // header is the column heading name
@@ -92,12 +92,6 @@ export const Columns = [
             
             setCustomerData((prevData) => ({
               ...prevData,
-<<<<<<< HEAD
-              totalCustomers: prevData.totalCustomers - 1,
-              activeCount:prevData.activeCount-1,
-              males:prevData.activeCount-1,
-              females:prevData.females-1
-=======
               totalCustomers: Math.max(prevData.totalCustomers - 1, 0),
               activeCount:
                 info.row.original.customerStatus.toLowerCase() === "active"
@@ -117,7 +111,6 @@ export const Columns = [
                 [info.row.original.customerCommunicationPreference.toLowerCase()]:
                   (prevData.communicationPreferences[info.row.original.customerCommunicationPreference.toLowerCase()] || 0) - 1,
               },
->>>>>>> 39ffb03c95d08ec442005171c158c6321a081597
             }));
 
             console.log('gender',info.row.original.gender)

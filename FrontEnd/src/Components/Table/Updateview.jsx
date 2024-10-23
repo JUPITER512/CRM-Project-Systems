@@ -8,16 +8,15 @@ import CustomerForm from "../../Pages/AddUser/CustomerForm";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
-import notify from "../../Utils/ToasterFunction";
+import notify from "@utils/ToasterFunction.js";
 import { useSetRecoilState } from "recoil";
 import { customerDataFamily } from "../../Store/CustomerData";
 import {
   emailSchema,
   nameSchema,
-  phoneNumberSchema,
   statusSchema,
   dobSchema,
-} from "../../Utils/InputValidation";
+} from "@utils/InputValidation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 

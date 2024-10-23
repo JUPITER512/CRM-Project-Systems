@@ -1,5 +1,5 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   paginationState,
   tableDataState,

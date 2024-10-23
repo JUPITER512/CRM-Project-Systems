@@ -1,9 +1,8 @@
 import Axios from "@hooks/Axios";
 import { useRecoilState } from "recoil";
 import { userImageAtom } from "../../Store/UserImage";
-import notify from "../../utils/ToasterFunction";
+import notify from "@utils/ToasterFunction.js";
 import { convertBase64 } from "./ConvertTOBase64";
-import { ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 const PictureUpload = () => {
   const [selectedFile, setSelectedFile] = useRecoilState(userImageAtom);
@@ -61,7 +60,7 @@ const PictureUpload = () => {
     return ()=>{
       setSelectedFile('')
     }
-  },[])
+  })
 
   return (
     <>

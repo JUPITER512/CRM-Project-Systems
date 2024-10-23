@@ -5,9 +5,9 @@
   import { tableDataState ,totalRows} from "../../Store/TableData";
   import { customerDataFamily } from "../../Store/CustomerData";
   import { useRecoilState, useSetRecoilState } from "recoil";
-  import notify from "../../utils/ToasterFunction";
+  import notify from "@utils/ToasterFunction";
   import { ToastContainer } from "react-toastify";
-  import { emailSchema ,nameSchema,phoneNumberSchema,statusSchema,dobSchema} from "../../Utils/InputValidation";
+  import { emailSchema ,nameSchema,statusSchema,dobSchema} from "@utils//InputValidation";
   import { yupResolver } from "@hookform/resolvers/yup";
   import * as yup from 'yup'
 

@@ -31,7 +31,7 @@ const RouteToDashboard = ({ children }) => {
     } else {
       setIsAuthenticated(false);
     }
-  }, []);
+  });
 
   if (isAuthenticated === null) {
     return <div>Loading...</div>;
