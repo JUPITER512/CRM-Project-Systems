@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { otpCode } from "../../../Utils/InputValidation.js";
 import { ToastContainer } from "react-toastify";
-import notify from "../../../utils/ToasterFunction.js";
+import notify from "@utils/ToasterFunction.js";
 const schema=yup.object().shape({
   otpcode:otpCode.fields.otp
 })

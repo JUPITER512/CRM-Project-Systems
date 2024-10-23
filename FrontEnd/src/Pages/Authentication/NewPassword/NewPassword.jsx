@@ -12,8 +12,8 @@ import { FaEye } from "react-icons/fa";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-import { passwordSchema } from "../../../Utils/InputValidation.js";
-import notify from "../../../utils/ToasterFunction.js";
+import { passwordSchema } from "@utils/InputValidation.js";
+import notify from "@utils/ToasterFunction.js";
 import { ToastContainer } from "react-toastify";
 
 

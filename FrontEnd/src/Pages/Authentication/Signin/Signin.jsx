@@ -10,10 +10,10 @@ import { useState } from "react";
 import {
   emailSchema,
   passwordSchema,
-} from "../../../Utils/InputValidation.js";
+} from "@utils/InputValidation.js";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import notify from "../../../utils/ToasterFunction.js";
+import notify from "@utils/ToasterFunction.js";
 import { ToastContainer } from "react-toastify";
 
 const schema = yup.object().shape({
