@@ -7,7 +7,7 @@
   import { useRecoilState, useSetRecoilState } from "recoil";
   import notify from "../../utils/ToasterFunction";
   import { ToastContainer } from "react-toastify";
-  import { emailSchema ,nameSchema,phoneNumberSchema,statusSchema,dobSchema} from "../../utils/inputValidations";
+  import { emailSchema ,nameSchema,phoneNumberSchema,statusSchema,dobSchema} from "../../Utils/InputValidation";
   import { yupResolver } from "@hookform/resolvers/yup";
   import * as yup from 'yup'
 

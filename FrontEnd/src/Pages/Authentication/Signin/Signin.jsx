@@ -10,7 +10,7 @@ import { useState } from "react";
 import {
   emailSchema,
   passwordSchema,
-} from "../../../utils/inputValidations.js";
+} from "../../../Utils/InputValidation.js";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import notify from "../../../utils/ToasterFunction.js";

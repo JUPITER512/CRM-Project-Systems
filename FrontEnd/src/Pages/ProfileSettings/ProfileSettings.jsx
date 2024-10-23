@@ -3,7 +3,7 @@ import PictureUpload from "./PictureUpload";
 import { useForm } from "react-hook-form";
 import Axios from "@hooks/Axios";
 import notify from "../../utils/ToasterFunction";
-import { phoneNumberSchema } from "../../utils/inputValidations.js";
+import { phoneNumberSchema } from "../../Utils/InputValidation.js";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastContainer } from "react-toastify";

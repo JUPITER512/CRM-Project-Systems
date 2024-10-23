@@ -11,7 +11,7 @@ import * as yup from 'yup';
 import notify from "../../../utils/ToasterFunction.js";
 import { ToastContainer } from "react-toastify";
 
-import { passwordSchema,emailSchema,nameSchema } from "../../../utils/inputValidations.js";
+import { passwordSchema,emailSchema,nameSchema } from "../../../Utils/InputValidation.js";
 const schema=yup.object().shape({
   email:emailSchema.fields.email,
   password:passwordSchema.fields.password,

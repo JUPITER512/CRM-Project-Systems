@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import notify from "../../utils/ToasterFunction";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { passwordSchema } from "../../utils/inputValidations.js";
+import { passwordSchema } from "../../Utils/InputValidation.js";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 

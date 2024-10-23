@@ -17,7 +17,7 @@ import {
   phoneNumberSchema,
   statusSchema,
   dobSchema,
-} from "../../utils/inputValidations";
+} from "../../Utils/InputValidation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
