@@ -16,7 +16,7 @@
     },
     server: {
       proxy: {
-        '/api': 'http://localhost:3000' // Proxy '/api' to backend
+        '/api': 'https://crmsuite.onrender.com' // Proxy '/api' to backend
       },
     },
     build: {

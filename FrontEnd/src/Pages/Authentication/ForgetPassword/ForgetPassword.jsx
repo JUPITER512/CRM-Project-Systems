@@ -1,12 +1,12 @@
 import AuthenticationWrapper from "@components/AuthenticationWrapper";
-import { Link, replace, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import AnimatePage from "@components/AnimatePage";
 import Axios from "@hooks/Axios";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
-import { emailSchema } from "../../../utils/inputValidations.js";
+import { emailSchema } from "@utils/inputValidations.js";
 import notify from "../../../utils/ToasterFunction.js";
 import { ToastContainer } from "react-toastify";
 
