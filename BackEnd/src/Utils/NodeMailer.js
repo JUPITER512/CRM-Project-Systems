@@ -1,15 +1,15 @@
-// import nodemailer from "nodemailer";
+import nodemailer from "nodemailer";
 
-// const transporter = nodemailer.createTransport({
-//   service: "Gmail",
-//   host: "smtp.gmail.com",
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: process.env.GMAIL_APP_EMAIL,
-//     pass: process.env.GMAIL_APP_PASSWORD,
-//   },
-// });
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.GMAIL_APP_EMAIL,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 export async function sendmail({
   email,
@@ -59,11 +59,11 @@ export async function sendmail({
     return;
   }
 
-  // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     console.error("Error sending email: ", error.message);
-  //   } else {
-  //     console.log("Email sent: ", info.response);
-  //   }
-  // });
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error sending email: ", error.message);
+    } else {
+      console.log("Email sent: ", info.response);
+    }
+  });
 }
