@@ -71,7 +71,7 @@ export const Sign_up = async (req, res) => {
     newUser.refreshToken = refreshToken;
     newUser.verify = false;
     await newUser.save();
-    sendmail({email:newUser.email,subject:'CRM Suite Email Verification Link',verificationLinkcode:newUser._id})
+    await sendmail({email:newUser.email,subject:'CRM Suite Email Verification Link',verificationLinkcode:newUser._id})
     res.status(200).json({
       message: "Account created Successfully with Verification Link",
     });
@@ -194,7 +194,7 @@ export const Forget_Password = async (req, res) => {
     userInDatabase.save();
     
     
-    sendmail({email:userInDatabase.email,code:otp,subject:"Crm Suite Password Change"})
+    await sendmail({email:userInDatabase.email,code:otp,subject:"Crm Suite Password Change"})
     return res.status(200).json({
       message: "Code is sent to your Email",
     });
