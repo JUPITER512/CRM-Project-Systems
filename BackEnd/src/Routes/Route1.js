@@ -6,7 +6,12 @@ import {upload} from '../Middlewear/Multer.js'
 
 const MainRoute=express.Router();
 
-
+const activeFunc=(req,res)=>{
+    res.status(200).json({
+        message:"Hello world"
+    })
+}
+MainRoute.get('/activeServer',activeFunc)
 MainRoute.post('/sign-up',Sign_up);
 MainRoute.post('/sign-in',Sign_in);
 MainRoute.post('/verify-otp',Verify_Otp)
