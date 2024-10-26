@@ -3,7 +3,8 @@
       {
         "source": "/api/(.*)",
         "destination": "https://crmsuite.onrender.com/api/$1"
-      }
+      },
+      {"source": "/(.*)", "destination": "/index.html"}
     ]
   }
   
